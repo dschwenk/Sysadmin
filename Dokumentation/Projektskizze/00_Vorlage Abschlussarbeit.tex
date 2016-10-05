@@ -1,0 +1,118 @@
+%Dokumentklasse
+%\documentclass[a4paper,12pt]{scrreprt}
+\documentclass[a4paper,12pt,oneside,pointlessnumbers]{scrbook}
+\usepackage[left= 2.5cm,right = 2cm, bottom = 4 cm]{geometry}
+%\usepackage[onehalfspacing]{setspace}
+% ============= Packages =============
+
+% Dokumentinformationen
+\usepackage[
+	pdftitle={Projektskizze},
+	pdfsubject={},
+	pdfauthor={Michael Stroh, Daniel Schwenk},
+	pdfkeywords={},	
+	%Links nicht einrahmen
+	hidelinks
+]{hyperref}
+
+
+% Standard Packages
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx, subfig}
+\graphicspath{{img/}}
+\usepackage{fancyhdr}
+\usepackage{lmodern}
+\usepackage{color}
+\usepackage{pdfpages} 
+\usepackage{listings}
+\usepackage{adjustbox}
+\usepackage{multirow}
+\usepackage[printonlyused]{acronym}
+\usepackage[nomain,acronym,xindy,toc]{glossaries}
+
+% zusätzliche Schriftzeichen der American Mathematical Society
+\usepackage{amsfonts}
+\usepackage{amsmath}
+
+
+%nicht einrücken nach Absatz
+%\setlength{\parindent}{0pt}
+
+
+% ============= Kopf- und Fußzeile =============
+\pagestyle{fancy}
+%
+\lhead{}
+\chead{}
+\rhead{\slshape \leftmark}
+%%
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+%%
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ============= Package Einstellungen & Sonstiges ============= 
+%Besondere Trennungen
+\hyphenation{De-zi-mal-tren-nung}
+
+
+% ============= Dokumentbeginn =============
+
+\begin{document}
+%Seiten ohne Kopf- und Fußzeile sowie Seitenzahl
+\pagestyle{empty}
+
+\include{01_titel}
+
+% Beendet eine Seite und erzwingt auf den nachfolgenden Seiten die Ausgabe aller Gleitobjekte (z.B. Abbildungen), die bislang definiert, aber noch nicht ausgegeben wurden. Dieser Befehl fügt, falls nötig, eine leere Seite ein, sodaß die nächste Seite nach den Gleitobjekten eine ungerade Seitennummer hat. 
+\cleardoubleoddpage
+
+\pagestyle{fancy}
+
+\pagenumbering{roman} % römische nummerieung für Abbildungsverzeichnis + Tabellenverzeichnis
+
+
+%Inhaltsverzeichnis
+\tableofcontents
+
+%\newpage % new page, damit nummerierung passt ...
+% Abbildungsverzeichnis in Inhaltsverzeichnis aufnehmen
+%\addcontentsline{toc}{chapter}{Abbkürzungsverzeichnis}
+%\include{001_abkuerzungsverzeichnis}
+
+%\newpage % new page, damit nummerierung passt ...
+% Abbildungsverzeichnis in Inhaltsverzeichnis aufnehmen
+%\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+%Verzeichnis aller Bilder
+%\listoffigures
+
+%\newpage % new page, damit nummerierung passt ...
+% Tabellenverzeichnis in Inhaltsverzeichnis aufnehmen
+%\addcontentsline{toc}{chapter}{Tabellverzeichnis}
+%Verzeichnis aller Tabellen
+%\listoftables
+
+
+% pagestyle für gesamtes Dokument aktivieren
+\pagestyle{fancy}
+
+\include{02_einleitung}
+
+\include{03_anforderungsanalyse}
+
+
+
+%Literaturverzeichnis
+%\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+%\bibliographystyle{unsrtdin}
+%\bibliography{Literatur}
+
+%\include{09_anhang}
+
+%\include{10_selbst}
+
+\end{document}
