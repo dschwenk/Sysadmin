@@ -2,34 +2,51 @@
 \chapter{Anforderungen}
 \label{sec:Anforderungen}
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+Die Anforderungen an das Honeypot-System werden in Muss-, Kann- und Soll-Kriterien unterteilt.
 
 
 \section{Muss-Kriterien}
 \label{subsec:Muss-Kriterien}
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec 
 \begin{itemize}
-\item erstes Stichwort
-\item zweites Stichwort
+\item Honeypot simuliert eine Auswahl an Diensten (http, ssh, ftp?, …?)
+\item Honeypot simuliert offenes WLAN-Netz / Fake-Access-Point?
+\item Angreifer hat keine Möglichkeit zur Interaktion mit dem Betriebssystem
+\item Angreifer bekommt keine bzw. nur gefälschte Antworten auf seine Anfragen
+\item ...
+\item Sammeln von Informationen z.B. über Verwundbarkeiten, Angreiferverhalten (Werkzeuge, Taktiken,Motive)  ??
+\item Überwachung des ein- und ausgehenden Netzwerkverkehrs
+\item ..
+\item Protokollierung darf für Angreifer nicht sichtbar sein
+\item Protokollierte Daten dürfen durch Angreifer nicht verändert werden können
+\item ..
+\item Honeypot muss jederzeit deaktivierbar sein?
+\item Honeypot muss für Zeit X online / aktiv sein (x Stunden, x Wochen?) um ein realistisches Angriffsziel zu sein
+\item ..
+\item Positionnierung
+\item Honeypot ist im Internet erreichbar
+\item separater Honeypot ist im internen Netz erreichbar?
+\item Produktivsysteme dürfen keiner Gefahr ausgesetzt werden (?)
 \end{itemize}
 
 
 
 \section{Soll-Kriterien}
 \label{subsec:Soll-Kriterien}
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec 
 \begin{itemize}
-\item erstes Stichwort
-\item zweites Stichwort
+\item das System soll einen möglichst geringer Stromverbrauch haben
+\item das System soll kostengünstig sein (Hardware)
+\item ...?
 \end{itemize}
 
 
 \section{Kann-Kriterien}
 \label{subsec:Kann-Kriterien}
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec 
 \begin{itemize}
-\item erstes Stichwort
-\item zweites Stichwort
+\item automatische Benachrichtigung, wenn System angegriffen wird
+\item automatisierte Auswertung von Logdateien
+\item ...
+\item Honeypot kann einfach zurückgesetzt / neu aufgesetzt werden (Skript zur automatischen einrichtung / konfiguration schreiben)?
+\item Logdateien / ausgewertete Dateien werden automatisch separat gespeichert (extra System, Cloud-Speicher, …?)
 \end{itemize}
 
 
