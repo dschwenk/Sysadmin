@@ -1,4 +1,3 @@
-\pagenumbering{arabic}
 \chapter{Anforderungen}
 \label{sec:Anforderungen}
 
@@ -8,45 +7,39 @@ Die Anforderungen an das Honeypot-System werden in Muss-, Kann- und Soll-Kriteri
 \section{Muss-Kriterien}
 \label{subsec:Muss-Kriterien}
 \begin{itemize}
-\item Honeypot simuliert eine Auswahl an Diensten (http, ssh, ftp?, …?)
-\item Honeypot simuliert offenes WLAN-Netz / Fake-Access-Point?
-\item Angreifer hat keine Möglichkeit zur Interaktion mit dem Betriebssystem
+\item Honeypot simuliert eine Auswahl an Diensten (http, ssh, ftp)
+\item Honeypot simuliert offenes WLAN-Netz / Fake-Access-Point
+\item Angreifer hat keine Möglichkeit zur Interaktion mit dem Host-Betriebssystem
 \item Angreifer bekommt keine bzw. nur gefälschte Antworten auf seine Anfragen
-\item ...
-\item Sammeln von Informationen z.B. über Verwundbarkeiten, Angreiferverhalten (Werkzeuge, Taktiken,Motive)  ??
 \item Überwachung des ein- und ausgehenden Netzwerkverkehrs
-\item ..
 \item Protokollierung darf für Angreifer nicht sichtbar sein
 \item Protokollierte Daten dürfen durch Angreifer nicht verändert werden können
-\item ..
-\item Honeypot muss jederzeit deaktivierbar sein?
-\item Honeypot muss für Zeit X online / aktiv sein (x Stunden, x Wochen?) um ein realistisches Angriffsziel zu sein
-\item ..
-\item Positionnierung
+\item Honeypot muss jederzeit deaktivierbar sein
+\item Honeypot muss für Zeit X online / aktiv sein, um ein realistisches Angriffsziel zu sein
 \item Honeypot ist im Internet erreichbar
-\item separater Honeypot ist im internen Netz erreichbar?
-\item Produktivsysteme dürfen keiner Gefahr ausgesetzt werden (?)
+\item Produktivsysteme dürfen keiner Gefahr ausgesetzt werden
+\item Honeypot muss in DMZ sein und darf keine Gefahr für unbeteiligte Dritte darstellen
 \end{itemize}
 
-
+\newpage
 
 \section{Soll-Kriterien}
 \label{subsec:Soll-Kriterien}
 \begin{itemize}
-\item das System soll einen möglichst geringer Stromverbrauch haben
-\item das System soll kostengünstig sein (Hardware)
-\item ...?
+\item automatisierte Auswertung von Logdaten
+\item automatische Benachrichtigung, wenn System angegriffen wird
+\item Honeypot kann einfach zurückgesetzt / neu aufgesetzt werden (beispielsweise durch Skript zur automatischen Einrichtung / Konfiguration)
+\item Logdateien / ausgewertete Dateien werden automatisch separat gespeichert (extra System, Cloud-Speicher)
 \end{itemize}
 
 
 \section{Kann-Kriterien}
 \label{subsec:Kann-Kriterien}
 \begin{itemize}
-\item automatische Benachrichtigung, wenn System angegriffen wird
-\item automatisierte Auswertung von Logdateien
-\item ...
-\item Honeypot kann einfach zurückgesetzt / neu aufgesetzt werden (Skript zur automatischen einrichtung / konfiguration schreiben)?
-\item Logdateien / ausgewertete Dateien werden automatisch separat gespeichert (extra System, Cloud-Speicher, …?)
+\item geringer Stromverbrauch von Honeypot-System
+\item kostengünstiger Versuchsaufbau
+\item Reverse DNS-Lookup von Angreifer-IP-Adresse(n)
+\item Simulation weiterer Geräte (Router, Firewall, PC)
 \end{itemize}
 
 
