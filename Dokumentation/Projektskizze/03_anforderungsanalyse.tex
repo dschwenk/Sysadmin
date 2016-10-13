@@ -7,18 +7,17 @@ Die Anforderungen an das Honeypot-System werden in Muss-, Kann- und Soll-Kriteri
 \section{Muss-Kriterien}
 \label{subsec:Muss-Kriterien}
 \begin{itemize}
-\item Honeypot simuliert eine Auswahl an Diensten (http, ssh, ftp)
-\item Honeypot simuliert offenes WLAN-Netz / Fake-Access-Point
-\item Angreifer hat keine Möglichkeit zur Interaktion mit dem Host-Betriebssystem
-\item Angreifer bekommt keine bzw. nur gefälschte Antworten auf seine Anfragen
-\item Überwachung des ein- und ausgehenden Netzwerkverkehrs
-\item Protokollierung darf für Angreifer nicht sichtbar sein
-\item Protokollierte Daten dürfen durch Angreifer nicht verändert werden können
+\item Honeypot ist über das Internet erreichbar
+\item Honeypot darf keinerlei Gefahr für andere Systeme darstellen
 \item Honeypot muss jederzeit deaktivierbar sein
-\item Honeypot muss für Zeit X online / aktiv sein, um ein realistisches Angriffsziel zu sein
-\item Honeypot ist im Internet erreichbar
-\item Produktivsysteme dürfen keiner Gefahr ausgesetzt werden
-\item Honeypot muss in DMZ sein und darf keine Gefahr für unbeteiligte Dritte darstellen
+\item Angreifer darf keinerlei Möglichkeit zur Interaktion mit dem Host-Betriebssystem haben
+\item Angreifer darf keine bzw. nur gefälschte Antworten auf Anfragen erhalten
+\item Honeypot muss mindestens einen, besser jedoch mehrere Dienste, wie beispielsweise HTTP, SSH oder FTP, simulieren/anbieten
+\item Honeypot muss ein realistisch wirkendes Angriffsziel darstellen
+\item Angriffe werden geloggt
+\item ein- und ausgehender Netzwerkverkehr muss (überwacht und) geloggt werden 
+\item protokollierte Daten dürfen durch Angreifer nicht verändert werden können
+
 \end{itemize}
 
 \newpage
@@ -26,10 +25,10 @@ Die Anforderungen an das Honeypot-System werden in Muss-, Kann- und Soll-Kriteri
 \section{Soll-Kriterien}
 \label{subsec:Soll-Kriterien}
 \begin{itemize}
-\item automatisierte Auswertung von Logdaten
 \item automatische Benachrichtigung, wenn System angegriffen wird
-\item Honeypot kann einfach zurückgesetzt / neu aufgesetzt werden (beispielsweise durch Skript zur automatischen Einrichtung / Konfiguration)
-\item Logdateien / ausgewertete Dateien werden automatisch separat gespeichert (extra System, Cloud-Speicher)
+\item Protokollierung und ggf. Forwarding von Log-Files dürfen für den Angreifer nicht sichtbar sein
+\item automatisierte Auswertung von Logdaten
+\item Logdateien / ausgewertete Daten werden automatisch separat gespeichert (extra System, Cloud-Speicher)
 \end{itemize}
 
 
@@ -40,6 +39,7 @@ Die Anforderungen an das Honeypot-System werden in Muss-, Kann- und Soll-Kriteri
 \item kostengünstiger Versuchsaufbau
 \item Reverse DNS-Lookup von Angreifer-IP-Adresse(n)
 \item Simulation weiterer Geräte (Router, Firewall, PC)
+\item Honeypot simuliert offenes WLAN-Netz / Fake-Access-Point
 \end{itemize}
 
 
