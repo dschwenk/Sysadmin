@@ -1,0 +1,79 @@
+\chapter{Implementierung}
+\label{ch:Implementierung}
+
+
+\section{Hostsystem}
+\label{sec:Hostsystem}
+
+- welches hostsystem mit welcher Konfiguration\\
+- Benutzer für uns beide anlegen\\
+- Konfiguation von Diensten wie SSH (Public Key Authentifizierung einrichten)\\
+- beachten, dass Server-SSH-Dienst von Port 22 auf anderen Port gelegt wird (z.b 10022), da Honeypot-SSH-Dienst auf Port 22 laufen sollte\\
+- vielelicht hinweis, dass über port scanner der normale ssh dienst trotzdem gefunden wird\\
+
+\section{SSH-Honeypot}
+\label{sec:SSH-Honeypot}
+
+- vorgehenseise installation + konfiguration kippo
+% http://www.blackhat.pm/ssh-honeypot-on-debian-with-kippo.html
+% https://technik.blogbasis.net/kippo-ssh-honeypot-installieren-17-10-2014
+
+- ausführliche Beschreibung Kippo + Dateien\\
+% http://resources.infosecinstitute.com/tracking-attackers-honeypot-part-2-kippo/
+
+- extract uniq ips aus kippo logfile \\
+% https://bruteforce.gr/extracting-unique-ips-from-logfile.html \\
+
+Die IP-Adressen von Angreifern werden im Kippo.log-Logfile neben zahlreichen Informationen wie bla %TODO
+gespeichert. Ein Auszug aus dem Logfile ist im Anhang unter x zu finden.\\
+
+Um aus den IP-Adressen Firewallregeln zu generieren (vgl. Kapitel x), müssen diese aus dem Logfile extrahiert werden. Dies geschieht mit Hilfe der Werkzeuge \textit{grep}, \textit{sort} und \textit{uniq}. Dazu wird an \textit{grep} ein regulären Ausdruck übergeben, der IP-Adressen filtert. Duplikate werden durch \textit{sort} und \textit{uniq} entfernt.
+
+\begin{lstlisting}[style=customc]
+cat logfile.log | 
+  grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' |
+  sort |
+  uniq > unique-ips.txt
+\end{lstlisting}
+
+Die Benutzernamen und Passwörter, die von Angreifern eingegeben werden, um sich zu authentifizieren werden ebenfalls extrahiert.
+
+% http://bob.k6rtm.net/kippowho.html
+
+\begin{lstlisting}[style=customc]
+rep ' login attempt ' kippo.log |
+  awk '{print ($9)}' |
+  sort |
+  uniq > user.txt
+\end{lstlisting}
+
+bla
+
+\begin{lstlisting}[style=customc]
+grep ' login attempt ' kippo.log |
+  awk '{print ($9)}' |
+  sed "s|^.*/||g" |
+  sed "s|]||g" > pw.txt
+\end{lstlisting}
+
+Passwortduplikate werden hierbei nicht entfernt, um daraus aussagekräftige Statistiken generieren zu können.
+
+
+- Auswertung der Passwörter (diese müssen zuerst geparst werden)\\
+% https://github.com/digininja/pipal
+% https://digi.ninja/blog/pipal_kippo.php
+- alternativ Kippo Graph
+% https://github.com/ikoniaris/kippo-graph
+
+\section{Web-Honeypot}
+\label{sec:Web-Honeypot}
+
+
+\section{sonstiges}
+\label{sec:sonstiges}
+
+- passende überschriften finden\\
+- archivieren von logfiles\\
+- benachrichtigung bie angriff\\
+- reverse lookup ip -adressen (+ darstellung auf karte? geo-ip?\\
+
