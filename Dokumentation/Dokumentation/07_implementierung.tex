@@ -5,8 +5,15 @@
 \section{Hostsystem}
 \label{sec:Hostsystem}
 
+\subsection{Grundkonfiguration}
+\label{subsec:Grundkonfiguration}
+
 - welches hostsystem mit welcher Konfiguration\\
 - Benutzer für uns beide anlegen\\
+
+\subsection{Konfiguration Serverdienste}
+\label{subsec:Konfiguration Serverdienste}
+
 - Konfiguation von Diensten wie SSH (Public Key Authentifizierung einrichten)\\
 - beachten, dass Server-SSH-Dienst von Port 22 auf anderen Port gelegt wird (z.b 10022), da Honeypot-SSH-Dienst auf Port 22 laufen sollte\\
 - vielelicht hinweis, dass über port scanner der normale ssh dienst trotzdem gefunden wird\\
@@ -14,12 +21,19 @@
 \section{SSH-Honeypot}
 \label{sec:SSH-Honeypot}
 
+\subsection{Installation und Konfiguration Kippo}
+\label{subsec:Installation und Konfiguration Kippo}
+
 - vorgehenseise installation + konfiguration kippo
 % http://www.blackhat.pm/ssh-honeypot-on-debian-with-kippo.html
 % https://technik.blogbasis.net/kippo-ssh-honeypot-installieren-17-10-2014
 
 - ausführliche Beschreibung Kippo + Dateien\\
 % http://resources.infosecinstitute.com/tracking-attackers-honeypot-part-2-kippo/
+
+
+\subsection{Kippo-Logfile auswerten}
+\label{subsec:Kippo-Logfile auswerten}
 
 - extract uniq ips aus kippo logfile \\
 % https://bruteforce.gr/extracting-unique-ips-from-logfile.html \\
