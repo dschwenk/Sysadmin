@@ -29,7 +29,8 @@
 \usepackage{listings}
 \usepackage{adjustbox}
 \usepackage{multirow}
-\usepackage[printonlyused]{acronym}
+%\usepackage[printonlyused]{acronym}
+\usepackage{acronym}
 \usepackage[nomain,acronym,xindy,toc]{glossaries}
 
 % zusätzliche Schriftzeichen der American Mathematical Society
@@ -106,9 +107,9 @@
 \tableofcontents
 
 %\newpage % new page, damit nummerierung passt ...
-% Abbildungsverzeichnis in Inhaltsverzeichnis aufnehmen
-%\addcontentsline{toc}{chapter}{Abbkürzungsverzeichnis}
-%\include{001_abkuerzungsverzeichnis}
+% Abbküzrungsverzeichnis in Inhaltsverzeichnis aufnehmen
+\addcontentsline{toc}{chapter}{Abbkürzungsverzeichnis}
+\include{00_abkuerzungsverzeichnis}
 
 %\newpage % new page, damit nummerierung passt ...
 % Abbildungsverzeichnis in Inhaltsverzeichnis aufnehmen
@@ -149,6 +150,6 @@
 
 \include{99_anhang}
 
-%\include{10_selbst}
+\include{10_selbst}
 
 \end{document}

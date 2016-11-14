@@ -5,10 +5,19 @@
 \section{Honeypot}
 \label{sec:Honeypot}
 
-- warum honeypot\\
-- wortherkunft?\\
-- klassifizierung (High/Low-Interaction Client/Server)\\
+Das allgemeine Ziel eines Honeypots ist es, einen Angreifer von einem eigentlichen Ziel abzulenken oder aber um Informationen von einem Angreifer und seiner Vorgehensweise zu sammeln \cite{NawrockiWSKS16}. Dazu wird von einem Honeypot ein oder mehrere Dienste, ein ganzes Rechnernetz oder das Verhalten von einem Anwender simuliert. Erfolgt ein Zugriff auf eine der simulierten Ressourcen, werden alle damit verbundenen Aktivitäten protokolliert und bei Bedarf Alarm ausgelöst. Das reale Netzwerk bleibt bleibt im Idealfall von Angriffen verschont, da es besser gesichert ist als der Honeypot. Der Ursprung der Bezeichnung Honeypot geht auf die Überlegung zurück, dass Bären mit einem Honigtopf sowohl abgelenkt als auch in eine Falle gelockt werden könnten \cite{WikiHoney16}.
 
-- vielleicht Daten / infos aus paper ziehen\\
-% http://www.cs.potsdam.edu/faculty/laddbc/Teaching/Ethics/StudentPapers/2007Mokube-Honeypots.pdf
-% https://arxiv.org/pdf/1608.06249.pdf
+
+Ein Honeypot kann je nach Eigenschaften oder Einsatzgebiet einer Klasse von Honeypots zugewiesen werden. Nawrocki et. al führen dazu in \cite{NawrockiWSKS16} eine Klassifizierung in "`Produktions-"' und "`Forschungshoneypots"', in Client- und Serverhoneypots sowie eine Unterscheidung nach physikalischem und virtuellem Honeypot auf. Zudem unterscheiden sie in Abhängigkeit der Interaktion:
+
+\begin{itemize}
+\item low-interaction honeypots (LIHP)
+\item medium-interaction honeypots (MIHP)
+\item high-interaction honeypots (HIHP)
+\end{itemize}
+
+Ein LIHP simuliert einen oder nur eine kleine Anzahl an Diensten wie SSH oder FTP und Antwortet dabei nur in sehr geringem Umfang, um beispielsweise Protokollhandshakes abzubilden. Die gewonnen Informationen dienen dabei oftmals nur zu statistischen Zwecken.
+MIHPs bilden einzelne Dienste erheblich genauer ab. Eine vollständige Kommunikation über den angeboten Dienst ist somit möglich. Da diese Typen jeweils nur einzelne Dienste und keine Funktionalität eines Betriebssystems abbilden, ist die Gefahr der Kompromittierung des Honeypots-System gering. HIHP sind in der Entwicklung, beim Ausrollen sowie bei der Wartung dagegen deutlich komplexer, ermöglichen jedoch auch den höchsten Grad der Erfassung von Angriffsmustern. Ein HIHP bildet ein komplettes Betriebssystem inklusive mehrerer Dienste ab. Der Fokus eines HIHPs liegt dabei nicht auf automatisierten Angriffen, sondern darauf, manuell ausgeführte Angriffe zu beobachten und protokollieren, um so neue Methoden der Angreifer rechtzeitig zu erkennen \cite{WikiHoney16}.
+
+
+Der Einsatz von Honeypots bringt nicht nur Vorteile mit sich. Nawrocki et. al bemängeln in \cite{NawrockiWSKS16}, dass ein Honeypot-System von einem Angreifer oftmals erkannt wird, da sich das Verhalten der simulierten Dienste von einem realen Dienst unterscheidet. Zudem besteht jederzeit die Gefahr, dass ein Honeypot-System von einem Angreifer kompromittiert oder gar übernommen wird. Dies stellt ein erhebliches Risiko für die umgebende Infrastruktur dar.
