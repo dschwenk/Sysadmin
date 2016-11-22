@@ -1,7 +1,6 @@
 \chapter{Implementierung}
 \label{ch:Implementierung}
 
-
 \section{Hostsystem}
 \label{sec:Hostsystem}
 
@@ -10,6 +9,15 @@
 
 - welches hostsystem mit welcher Konfiguration\\
 - Benutzer für uns beide anlegen\\
+
+Als Hostsystem wird ein Debian X.y 64-Bit eingesetzt. Dieses wird vom Rechenzentrum der Hochschule Ravensburg-Weingarten bereitgestellt. 
+
+Um das System auf einen aktuellen Stand zu bringen wird ein Update der installierten Pakete durchgeführt. Dazu werden die Paketlisten neu eingelesen und neue Paketversionen installiert:
+
+\begin{lstlisting}[style=customc]
+apt-get update && apt-get upgrade
+\end{lstlisting}
+
 
 \subsection{Konfiguration Serverdienste}
 \label{subsec:Konfiguration Serverdienste}
@@ -24,44 +32,95 @@
 \subsection{Installation und Konfiguration Kippo}
 \label{subsec:Installation und Konfiguration Kippo}
 
-- vorgehenseise installation + konfiguration kippo
+% vorgehenseise installation + konfiguration kippo\\
 % http://www.blackhat.pm/ssh-honeypot-on-debian-with-kippo.html
 % https://technik.blogbasis.net/kippo-ssh-honeypot-installieren-17-10-2014
 
-- ausführliche Beschreibung Kippo + Dateien\\
+% ausführliche Beschreibung Kippo + Dateien\\
 % http://resources.infosecinstitute.com/tracking-attackers-honeypot-part-2-kippo/
+
+Dieses Kapitel beschreibt die Vorgehensweise zur Installation und Konfiguration von einem SSH-Honeypot auf Basis von Kippo. Dieser SSH-Honeypot soll wie für SSH üblich auf Port 22 eingerichtet werden. Da aktuell der standard SSH-Dienst auf Port 22 läuft, muss dieser zuvor angepasst werden. Dazu wird der Port in der Konfigurationsdatei \textit{etc/ssh/sshd\_config} auf Port 10022 abgeändert und der Dienst anschließend via \textit{service sshd restart} neugestartet.
+
+Damit Kippo lauffähig ist, sind einige zusätzliche Pakete notwendig\footnote{ Kippo Abhängigkeiten: \url{https://github.com/desaster/kippo\#requirements}}. Diese werden, ebenso wie der git-Client für einen einfachen Download des Kippo-Projekts, installiert:
+
+\begin{lstlisting}[style=customc]
+apt-get install python-dev openssl python-openssl python-pyasn1 
+  python-twisted git
+\end{lstlisting}
+
+Einer Ausführung von Befehlen oder Diensten mit root-Rechten sollte stets wohl bedacht sein und nach Möglichkeit vermieden werden. Die Ausführung des Honeypot-SSH-Dienstes mit root-Rechten oder auch unter einem unserer Benutzer wäre höchst sicherheitskritisch. Ein Angreifer könnte darüber volle Kontrolle über das Hostsystem erlangen. Um diese Gefahr möglichst gering zu halten wird ein separater Benutzer eingerichtet:
+
+\begin{lstlisting}[style=customc]
+useradd -d /home/kippo -s /bin/bash -m kippo -g sudo
+\end{lstlisting}
+
+Um auf einem Linux-System einen Port kleiner 1024 ("`well known ports"') zu verwenden sind root-Rechte erforderlich. Genau dies soll für den SSH-Honeypot-Dienst wie oben beschrieben vermieden werden. Um auch einem normalen Benutzer die Verwendung eines Ports kleiner 1024 zu ermöglichen, wird auf das Programm \textit{AuthBind}\footnote{ \textit{AuthBind}: \url{http://man.cx/authbind(1)}} zurückgegriffen. AuthBind ermöglicht es auch Benutzern auf priviliergte Ports zuzugreifen. Die Installation von Authbind erfolgt via:
+
+\begin{lstlisting}[style=customc]
+apt-get install authbind
+\end{lstlisting}
+
+Die Verwendung von Port 22 wird über die Erstellung einer Datei unter \textit{/etc/authbind/byport/} sowie die Anpassung der Berechtigungen für den Kippo-Benutzer auf diese Datei ermöglicht:
+
+\begin{lstlisting}[style=customc]
+touch /etc/authbind/byport/22
+chown kippo /etc/authbind/byport/22
+chmod 777 /etc/authbind/byport/22
+\end{lstlisting}
+
+Der Download von Kippo erfolgt direkt von der Projektseite auf Github\footnote{ \textit{Kippo-Projekt auf Github}: \url{https://github.com/desaster/kippo}}:
+
+\begin{lstlisting}[style=customc]
+git clone https://github.com/desaster/kippo.git
+\end{lstlisting}
+
+Im Kippo-Verzeichnis befindet sich eine Datei, die eine Standardkonfiguration enthält. In dieser wird der  voreingestellte Port auf Port 22 abgeändert. Zudem muss die Konfigurationsdatei in \textit{kippo.cfg} umbenannt werden:
+
+\begin{lstlisting}[style=customc]
+mv kippo.cfg.dist kippo.cfg
+\end{lstlisting}
+
+Damit Kippo mit Hilfe von AuthBind ausgeführt wird, muss das "`Kippo-Start-Skript"' angepasst werden. Dazu wird der Befehl \textit{authbind} in das Skript aufgenommen:
+
+\begin{lstlisting}[style=customc]
+authbind --deep twistd -y kippo.tac -l log/kippo.log --pidfile kippo.pid
+\end{lstlisting}
+
+Der Parameter \textit{--deep} sorgt dafür, dass nicht nur das direkt folgende Programm, sondern auch alle Programme die folge dieses Aufrufs sind, unter \textit{authbind} ausgeführt werden. twistd, xy, wird zudem eine Logdatei sowie ein Pidfile übergeben. In diesem wird die Prozess-ID abgelegt.
+
+Parameter erklären ...\\
+
+Nach Ausführung des "`Kippo-Start-Skript"' läuft der Prozess im Hintergrund. In Folge dessen wird auch das Kippo-Logfile angelegt, in dem Zugriffe auf den SSH-Honeypot-Dienst dokumentiert werden. Änderungen in diesem Logfile können über
+
+\begin{lstlisting}[style=customc]
+tail -f /home/kippo/kippo/log/
+\end{lstlisting}
+
+direkt verfolgt werden.
+
 
 
 \subsection{Kippo-Logfile auswerten}
 \label{subsec:Kippo-Logfile auswerten}
 
-- extract uniq ips aus kippo logfile \\
+% - extract uniq ips aus kippo logfile \\
 % https://bruteforce.gr/extracting-unique-ips-from-logfile.html \\
 
-Die IP-Adressen von Angreifern werden im Kippo.log-Logfile neben zahlreichen Informationen wie bla %TODO
-gespeichert. Ein Auszug aus dem Logfile ist im Anhang unter x zu finden.\\
+Die IP-Adressen von Angreifern werden im Kippo.log-Logfile neben zahlreichen Informationen wie eingegeben Benutzernamen, Passwörter und Befehle gespeichert. Ein Auszug aus einem Kippo-Logfile ist im Anhang unter x zu finden. Aus diesen Informationen sollen Statistiken zu Benutzernamen und Passwörter sowie automatisiert Firewallregeln erstellt werden, um Angriffe von diesen IPs zeitweise zu verhindern.
 
-Um aus den IP-Adressen Firewallregeln zu generieren (vgl. Kapitel x), müssen diese aus dem Logfile extrahiert werden. Dies geschieht mit Hilfe der Werkzeuge \textit{grep}, \textit{sort} und \textit{uniq}. Dazu wird an \textit{grep} ein regulären Ausdruck übergeben, der IP-Adressen filtert. Duplikate werden durch \textit{sort} und \textit{uniq} entfernt.
+Wie dem Kippo-Logfile unter x.y zu entnehmen ist, werden Benutzernamen und Passwörter als Teile von Zeichenketten im Logfile abgelegt. Für eine Auswertung müssen diese aus dem Logfile extrahiert werden. Dies erfolgt mit Hilfe der Werkzeuge \textit{grep} und \textit{awk}. Duplikate werden durch \textit{sort} und \textit{uniq} entfernt.
 
-\begin{lstlisting}[style=customc]
-cat logfile.log | 
-  grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' |
-  sort |
-  uniq > unique-ips.txt
-\end{lstlisting}
-
-Die Benutzernamen und Passwörter, die von Angreifern eingegeben werden, um sich zu authentifizieren werden ebenfalls extrahiert.
 
 % http://bob.k6rtm.net/kippowho.html
 
 \begin{lstlisting}[style=customc]
-rep ' login attempt ' kippo.log |
+grep ' login attempt ' kippo.log |
   awk '{print ($9)}' |
   sort |
   uniq > user.txt
 \end{lstlisting}
 
-bla
+Ebenfalls werden Passwörter extrahiert:
 
 \begin{lstlisting}[style=customc]
 grep ' login attempt ' kippo.log |
@@ -78,6 +137,18 @@ Passwortduplikate werden hierbei nicht entfernt, um daraus aussagekräftige Stat
 % https://digi.ninja/blog/pipal_kippo.php
 - alternativ Kippo Graph
 % https://github.com/ikoniaris/kippo-graph
+
+\subsection{Firewallregeln erstellen}
+\label{subsec:Firewallregeln erstellen}
+
+Um aus den IP-Adressen Firewallregeln zu generieren (vgl. Kapitel x), müssen auch diese aus dem Kippo-Logfile extrahiert werden. Dies geschieht wie bereits unter xy beschrieben mit Hilfe der Werkzeuge \textit{grep}, \textit{sort} und \textit{uniq}. Dazu wird an \textit{grep} ein regulären Ausdruck übergeben, der IP-Adressen filtert. Damit keine identischen Firewallregeln erzeugt werden, werden doppelte IP-Adressen entfernt.
+
+\begin{lstlisting}[style=customc]
+cat logfile.log | 
+  grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' |
+  sort |
+  uniq > unique-ips.txt
+\end{lstlisting}
 
 \section{Web-Honeypot}
 \label{sec:Web-Honeypot}
