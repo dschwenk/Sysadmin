@@ -7,16 +7,40 @@
 \subsection{Grundkonfiguration}
 \label{subsec:Grundkonfiguration}
 
-- welches hostsystem mit welcher Konfiguration\\
-- Benutzer für uns beide anlegen\\
+Als Hostsystem kommt ein Debian x.y 64-Bit zum Einsatz. Dieses System ist ein virtuelles System welches auch als vServer bezeichnet wird. Bereitgestellt wird dieser vServer von providerdienste.de\footnote{\url{https://www.providerdienste.de/}} mit folgenden Eigenschaften:
 
-Als Hostsystem wird ein Debian X.y 64-Bit eingesetzt. Dieses wird vom Rechenzentrum der Hochschule Ravensburg-Weingarten bereitgestellt. 
+\begin{itemize}
+\item 2 CPU-Kerne %TODO a xy - Takt o.ä. hinzufügen
+\item 2 GB Arbeitsspeicher
+\item 50 GB Festplatte
+\item 1 IPv4-Adresse
+%\item 10 Ipv6-Adressen
+\end{itemize}
 
-Um das System auf einen aktuellen Stand zu bringen wird ein Update der installierten Pakete durchgeführt. Dazu werden die Paketlisten neu eingelesen und neue Paketversionen installiert:
+Das System wurde mit diesen Eigenschaften gewählt, um sicherzustellen, das für diesen Versuchsaufbau ausreichend Rechenleistung und Speicher zur Verfügung steht. Zudem ist die öffentliche IPv4-Adresse zu nennen, die den Teammitgliedern in einem Versuchsaufbau in einem privaten Heimnetzwerk aus technischen Gründen nicht zur Verfügung gestanden hat. Die Verwaltung des Servers erfolgt über einen Root-Zugang .. %TODO
+Alternative ist eine Verwaltung über eine sogenannte Remote-Konsole möglich. Über diese Konsole  kann das System jederzeit gestartet und gestoppt werden, selbst dann wenn kein Zugriff via SSH zur Verfügung steht.\\
+
+Um das System nach der Übergabe durch providerdienste.de auf einen aktuellen Stand zu bringen, wird ein Update der installierten Pakete durchgeführt. Dazu werden die Paketlisten neu eingelesen und neue Paketversionen installiert:
 
 \begin{lstlisting}[style=customc]
 apt-get update && apt-get upgrade
 \end{lstlisting}
+
+Um nicht ausschließlich mit root-Rechten zu arbeiten wird für jedes Teammitglied ein eigener Benutzer mit Homeverzeichnis eingerichtet:
+
+\begin{lstlisting}[style=customc]
+useradd -d /home/mstroh -s /bin/bash -m mstroh
+useradd -d /home/dschwenk -s /bin/bash -m dschwenk
+\end{lstlisting}
+
+Um diesen Benutzern die Ausführung von Kommandos mit root-Rechten dennoch zu ermöglichen, werden diese Benutzer in die Gruppe \textit{sudo} aufgenommen
+
+\begin{lstlisting}[style=customc]
+sudo adduser mstroh sudo
+sudo adduser dschwenk sudo
+\end{lstlisting}
+
+Damit ist die Grundkonfiguration des vServers abgeschlossen. %TODO .. wirklich? fehlt  noch was? netzwerkconfig o.ä?
 
 
 \subsection{Konfiguration Serverdienste}
@@ -25,6 +49,31 @@ apt-get update && apt-get upgrade
 - Konfiguation von Diensten wie SSH (Public Key Authentifizierung einrichten)\\
 - beachten, dass Server-SSH-Dienst von Port 22 auf anderen Port gelegt wird (z.b 10022), da Honeypot-SSH-Dienst auf Port 22 laufen sollte\\
 - vielelicht hinweis, dass über port scanner der normale ssh dienst trotzdem gefunden wird\\
+
+Das System wurde von providerdienste.de mit einem aktiven SSH-Dienst ausgeliefert. ..\\
+
+Damit eine Authentifizieurng stattfinden kann, muss im Benutzerverzeichnis der Teammitglieder auf dem Server ein .ssh-Verzeichnis angelegt werden. In diese Verzeichnise wird jeweils der öffentliche Schlüssel in die Datei \textit{authorized\_keys} abegelegt.
+
+\begin{lstlisting}[style=customc]
+cat .ssh/id_dsa.pub | ssh heinz@server 'cat >> .ssh/authorized_keys'
+\end{lstlisting}
+
+
+Um die Authentifizierung via Passwort zu deaktivieren wird die die \textit{sshd\_config} unter \textit{/etc/ssh/} wie folgt angepasst:
+
+\begin{lstlisting}[style=customc]
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+UsePAM no
+\end{lstlisting}
+
+Ebenfalls wird der Parameter \textit{PermitRootLogin} auf \textit{no} gesetzt, um einen zukünftigen Login des root-Benutzers zu deaktivieren. Abschließend wird der SSH-Dienst mit einem
+
+\begin{lstlisting}[style=customc]
+service ssh restart
+\end{lstlisting}
+
+neugestartet. Von nun an ist nur noch eine Anmeldung über die Benutzeraccounts der Teammitglieder in Kombination mit einer Public-Key-Authentifizierung möglich.
 
 \section{SSH-Honeypot}
 \label{sec:SSH-Honeypot}
@@ -96,9 +145,11 @@ Nach Ausführung des "`Kippo-Start-Skript"' läuft der Prozess im Hintergrund. I
 tail -f /home/kippo/kippo/log/
 \end{lstlisting}
 
-direkt verfolgt werden.
+direkt verfolgt werden. Von nun an kann auch eine Verbindung auf Port 22 aufgebaut werden:
 
+Die Anpassung des Banners kann in der Konfigurationsdatei von Kippo vorgenommen werden.
 
+Nicht zu vergessen ist, dass der SSH-Dienst auf Port 10022, der die Verbindung der Projektmitarbeiter ermöglicht, durch einen Portscanner wie NMap aufgespürt werden kann.
 
 \subsection{Kippo-Logfile auswerten}
 \label{subsec:Kippo-Logfile auswerten}
@@ -150,6 +201,36 @@ cat logfile.log |
   uniq > unique-ips.txt
 \end{lstlisting}
 
+Die Generierung der Firwallregeln geschieht automatisiert über nachfolgendes Skript:
+
+\begin{lstlisting}[style=customc]
+#!/bin/bash
+#
+# set variables
+FW="/sbin/iptables"
+IPFILE="path/to/ip/file"
+
+# delete existing rules and chains
+$FW -F
+$FW -X
+
+# set standard rules
+$FW -P INPUT   ACCEPT
+$FW -P FORWARD ACCEPT
+$FW -P OUTPUT  ACCEPT
+
+# create rules to block each extracted ip address
+for IP in $IPFILE; do
+    $FW -A INPUT -s IP -j DROP
+done
+
+\end{lstlisting}
+
+Das Skript löscht zu Beginn alle existierenden Regeln. Dies geschieht explizit, um mögliche false positives, die durch dynamische IP-Adressen zustanden kommen können, nicht dauerhaft zu blockieren. Ebenfalls explizit werden über die Regeln standardmäßig alle Verbindungen akzeptiert. Damit lassen sich aus den Verbindungs-Logfiles beispielsweise Portscans nachweisen.
+
+Dieses Skript wird über einen cronjob einmal täglich ausgeführt.
+
+
 \section{Web-Honeypot}
 \label{sec:Web-Honeypot}
 
@@ -162,3 +243,60 @@ cat logfile.log |
 - benachrichtigung bie angriff\\
 - reverse lookup ip -adressen (+ darstellung auf karte? geo-ip?\\
 
+\subsection{Archivierung von Daten}
+\label{subsec:Archivierung von Daten}
+
+Um der Soll-Anforderung nach der Archivierung von Logdaten sowie Analyseergebnisse zu entsprechen, werden diese Daten automatisiert auf einem Cloud-Speicher abgelegt. Dieses Archivierung stellt sicher, dass auf diese Daten selbst dann zurückgegriffen werden kann, wenn das System kompromittiert wurde oder nicht weiter zur Verfügung steht. Eine Marktanalyse ergibt eine Vielzahl an verfügbaren Cloud-Speichern. Das Projektteam entscheidet sich auf Grund der Verfügbarkeit eines Linux-Clients, der einfachen Installation und Konfiguration dieses Clients sowie dessen Möglichkeit zur automatischen Ausführung via Kommandozeile für Google Drive\footnote{ Google Drive: \url{https://www.google.com/intl/de_de/drive/}}. Anzumerken ist, dass dieser Client nicht von Google selbst, sondern von Petter Rasmussen in einem open source Projekt entwickelt wird\footnote{ Peter Rasmussen gDrive command line tool: \url{https://github.com/prasmussen/gdrive}}. Der Download der aktuellen Version 2.1 des 64-Bit-Clients für Linux erfolgt durch:
+
+\begin{lstlisting}[style=customc]
+wget https://docs.google.com/uc?id=0B3X9GlR6EmbnQ0FtZmJJUXEyRTA&export=download
+\end{lstlisting}
+
+Durch eine Umbennung wird der kryptische Dateiname lesbar gemacht. Zudem wird die Datei als ausführbar markiert:
+
+\begin{lstlisting}[style=customc]
+mv 0B3X9GlR6EmbnQ0FtZmJJUXEyRTA&export gdrive
+chmod +x gdrive
+\end{lstlisting}
+
+Die Installation erfolgt via:
+
+\begin{lstlisting}[style=customc]
+sudo install gdrive /usr/local/bin/gdrive
+\end{lstlisting}
+
+Nach der erfolgreichen Installation des Clients müssen diesem Berechtigungen zum Zugriff auf einen Google Drive Account eingerichtet werden. Dazu wird der Client mit einem beliebigen Parameter aufgerufen:
+
+\begin{lstlisting}[style=customc]
+gdrive list
+\end{lstlisting}
+
+Infolge dessen wird eine Aufforderung zum Besuch der Google-Drive-Website zur Authentifizierung ausgegeben. Somit ist eine Verbindung zwischen dem Client und dem Google Drive-Dienst hergestellt.
+
+In die Archivierung fließen sämtliche Log- und Analysedaten sowie Konfigurationsdateien ein. Dazu gehören:
+
+\begin{itemize}
+\item Kippo-Konfiguration und Logfile
+\item x.y Logfile
+\item Auswertung der Benutzer- und Passwortdaten
+\item Auswertung der IP-Adressen
+\item Konfigurationsdateien von iptables
+\end{itemize}
+
+Für einen effizienten Upload werden die oben genannten Dateien alle 24 Stunden zu einem komprimierten zip-Archiv zusammengefasst und auf den Cloud-Speicher hochgeladen. Um diesen Vorgang zu automatisieren wird folgendes Bash-Skript angelegt:
+
+\begin{lstlisting}[style=customc]
+#!/bin/bash
+#
+# set up variables
+DATE=`date +%Y%m%d_%H-%M`
+FILENAME=$DATE_backup.tar.gz
+
+# create zip archive
+tar xyz $FILENAME
+
+# upload zip archive
+gdrive upload $FILENAME
+\end{lstlisting}
+
+Ausgeführt wird dieses Skript täglich um 6:00 Uhr mit Hilfe eines cronjobs. Die Übertragung der Daten erfolgt verschlüsselt. Ein möglicher Angreifer kann so den Datenstrom nicht nachvollziehen. %TODO .. wirklich? .. man in the middle?
