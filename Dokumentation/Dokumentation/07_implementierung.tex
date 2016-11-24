@@ -192,7 +192,9 @@ Passwortduplikate werden hierbei nicht entfernt, um daraus aussagekräftige Stat
 \subsection{Firewallregeln erstellen}
 \label{subsec:Firewallregeln erstellen}
 
-Um aus den IP-Adressen Firewallregeln zu generieren (vgl. Kapitel x), müssen auch diese aus dem Kippo-Logfile extrahiert werden. Dies geschieht wie bereits unter xy beschrieben mit Hilfe der Werkzeuge \textit{grep}, \textit{sort} und \textit{uniq}. Dazu wird an \textit{grep} ein regulären Ausdruck übergeben, der IP-Adressen filtert. Damit keine identischen Firewallregeln erzeugt werden, werden doppelte IP-Adressen entfernt.
+Ziel unseres System ist es, einen Angreifer zu beobachten und aus seinem Vorgehen zu lernen. Anschließend soll der Angreifer von der Infrastruktur fern gehalten werden, um die Sicherheit anderer Systeme zu wahren. Um einen Angreifer wirkungsvoll von einer Infrastruktur fernzuhalten, besteht die Möglichkeit den Datenverkehr des Angreifers mit einer Firewall, die dieser Infrastruktur vorgelagert ist, zu blockieren. Da in dem vorliegenden Versuchsaufbau keine weiterreichende Infrastruktur mit einer vorgelagerten Firewall vorhanden ist, wird hier exemplarisch auf dem Honeypotsystem selbst die Abwehr der Datenpakete des Angreifers mit Hilfe von \textit{iptables} vorgenommen. Die Wahl fällt auf \textit{iptables}, da hiermit Firwallregeln über sogenannte Ketten von Regeln erstellt werden können. Zudem ist \textit{iptables} standardmäßig unter Debian verfügbar und kann über ein Bash-Skript automatisiert werden. 
+
+Um Firewallregeln generieren zu können, müssen die IP-Adressen der Angreifer aus dem Kippo-Logfile extrahiert werden. Dies geschieht wie bereits unter \ref{subsec:Kippo-Logfile auswerten} beschrieben mit Hilfe der Werkzeuge \textit{grep}, \textit{sort} und \textit{uniq}. Dazu wird an \textit{grep} ein regulären Ausdruck übergeben, der IP-Adressen filtert. Damit keine identischen Firewallregeln erzeugt werden, werden doppelte IP-Adressen entfernt.
 
 \begin{lstlisting}[style=customc]
 cat logfile.log | 
@@ -208,7 +210,11 @@ Die Generierung der Firwallregeln geschieht automatisiert über nachfolgendes Sk
 #
 # set variables
 FW="/sbin/iptables"
-IPFILE="path/to/ip/file"
+IPFILE="/home/dschwenk/ipfile.txt"
+BACKUPFILE="/home/dschwenk/backupfile.txt"
+
+# backup current rules
+iptables-save > $BACKUPFILE
 
 # delete existing rules and chains
 $FW -F
@@ -219,14 +225,14 @@ $FW -P INPUT   ACCEPT
 $FW -P FORWARD ACCEPT
 $FW -P OUTPUT  ACCEPT
 
-# create rules to block each extracted ip address
-for IP in $IPFILE; do
-    $FW -A INPUT -s IP -j DROP
-done
+while read IP; do
+  $FW -A INPUT -s $IP -j DROP
+done < $IPFILE
+
 
 \end{lstlisting}
 
-Das Skript löscht zu Beginn alle existierenden Regeln. Dies geschieht explizit, um mögliche false positives, die durch dynamische IP-Adressen zustanden kommen können, nicht dauerhaft zu blockieren. Ebenfalls explizit werden über die Regeln standardmäßig alle Verbindungen akzeptiert. Damit lassen sich aus den Verbindungs-Logfiles beispielsweise Portscans nachweisen.
+Das Skript fertig zuerst über iptabales-save ein Backup der bestehenden Regeln an, welches wie unter \ref{subsec:Archivierung von Daten} beschrieben archiviert wird. Eine beispielhafte Ausgabe von iptables-save ist im Anhang unter x.y zu finden. Anschließend werden alle existierenden Regeln gelöscht. Dies geschieht explizit, um mögliche false positives, die durch dynamische IP-Adressen zustanden kommen können, nicht dauerhaft zu blockieren. Ebenfalls explizit werden über die Regeln standardmäßig alle Verbindungen akzeptiert. Damit lassen sich aus den Verbindungs-Logfiles beispielsweise Portscans nachweisen.
 
 Dieses Skript wird über einen cronjob einmal täglich ausgeführt.
 
