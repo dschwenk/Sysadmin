@@ -1,0 +1,96 @@
+Basic Results
+
+Total entries = 7
+Total unique entries = 5
+
+Top 10 passwords
+Qwe+123- = 2 (28.57%)
+asdf = 2 (28.57%)
+sdf = 1 (14.29%)
+qwe12 = 1 (14.29%)
+qwe = 1 (14.29%)
+
+Top 10 base words
+asdf = 2 (28.57%)
+
+Password length (length ordered)
+3 = 2 (28.57%)
+4 = 2 (28.57%)
+5 = 1 (14.29%)
+8 = 2 (28.57%)
+
+Password length (count ordered)
+8 = 2 (28.57%)
+3 = 2 (28.57%)
+4 = 2 (28.57%)
+5 = 1 (14.29%)
+
+   ||   |
+   ||   |
+   ||   |
+   ||   |
+   ||   |
+   ||   |
+   ||   |
+   |||  |
+   |||  |
+   |||  |
+   |||  |
+   |||  |
+   |||  |
+   |||  |
+   |||  |
+|||||||||
+012345678
+
+One to six characters = 5 (71.43%)
+One to eight characters = 7 (100.0'%)
+More than eight characters = 0 (0.0%)
+
+Only lowercase alpha = 4 (57.14%)
+Only uppercase alpha = 0 (0.0%)
+Only alpha = 4 (57.14%)
+Only numeric = 0 (0.0%)
+
+First capital last symbol = 2 (28.57%)
+First capital last number = 0 (0.0%)
+
+Single digit on the end = 0 (0.0%)
+Two digits on the end = 1 (14.29%)
+Three digits on the end = 0 (0.0%)
+
+Last number
+2 = 1 (14.29%)
+
+  |
+  |
+  |
+  |
+  |
+  |
+  |
+  |
+  |
+  |
+  |
+  |
+  |
+  |
+  |
+||||||||||
+0123456789
+
+Last digit
+2 = 1 (14.29%)
+
+Last 2 digits (Top 10)
+12 = 1 (14.29%)
+
+Character sets
+loweralpha: 4 (57.14%)
+loweralphanum: 1 (14.29%)
+
+Character set ordering
+allstring: 4 (57.14%)
+othermask: 2 (28.57%)
+stringdigit: 1 (14.29%)

@@ -7,57 +7,76 @@
 \subsection{Grundkonfiguration}
 \label{subsec:Grundkonfiguration}
 
-Als Hostsystem kommt ein Debian x.y 64-Bit zum Einsatz. Dieses System ist ein virtuelles System welches auch als vServer bezeichnet wird. Bereitgestellt wird dieser vServer von providerdienste.de\footnote{\url{https://www.providerdienste.de/}} mit folgenden Eigenschaften:
+Als Hostsystem kommt ein Debian Jessy (Version 8.6) 64-Bit zum Einsatz. Dieses System ist ein virtuelles System, welches auch als vServer bezeichnet wird. Bereitgestellt wird dieser vServer von providerdienste.de\footnote{\url{https://www.providerdienste.de/}} mit folgenden Eigenschaften:
 
 \begin{itemize}
-\item 2 CPU-Kerne %TODO a xy - Takt o.ä. hinzufügen
+\item 2 CPU-Kerne a 2,67 GHz
 \item 2 GB Arbeitsspeicher
 \item 50 GB Festplatte
 \item 1 IPv4-Adresse
 %\item 10 Ipv6-Adressen
 \end{itemize}
 
-Das System wurde mit diesen Eigenschaften gewählt, um sicherzustellen, das für diesen Versuchsaufbau ausreichend Rechenleistung und Speicher zur Verfügung steht. Zudem ist die öffentliche IPv4-Adresse zu nennen, die den Teammitgliedern in einem Versuchsaufbau in einem privaten Heimnetzwerk aus technischen Gründen nicht zur Verfügung gestanden hat. Die Verwaltung des Servers erfolgt über einen Root-Zugang .. %TODO
-Alternative ist eine Verwaltung über eine sogenannte Remote-Konsole möglich. Über diese Konsole  kann das System jederzeit gestartet und gestoppt werden, selbst dann wenn kein Zugriff via SSH zur Verfügung steht.\\
+Das System wurde mit diesen Eigenschaften gewählt, um sicherzustellen, dass für diesen Versuchsaufbau ausreichend Rechenleistung und Speicher zu Verfügung steht. Zudem ist die öffentliche IPv4-Adresse zu nennen, die den Teammitgliedern in einem Versuchsaufbau in einem privaten Heimnetzwerk aus technischen Gründen nicht zur Verfügung gestanden hat. Die Verwaltung des Servers erfolgt zunächst über SSH über einen Root-Zugang, der von providerdienste.de bereitgestellt wird.
+Alternative ist eine Verwaltung über eine sogenannte Remote-Konsole möglich. Über diese Konsole  kann das System jederzeit gestartet und gestoppt werden oder auch das root-Passwort neu gesetzt werden, selbst dann wenn kein Zugriff via SSH zu Verfügung steht. Zudem kann eine Neuinstallation ausgeführt werden.\\
 
-Um das System nach der Übergabe durch providerdienste.de auf einen aktuellen Stand zu bringen, wird ein Update der installierten Pakete durchgeführt. Dazu werden die Paketlisten neu eingelesen und neue Paketversionen installiert:
+Da das System als installiertes System mit funktionsfähiger Netzwehrkonfiguration übergeben wurde, ist der erste Schritt eine Aktualisierung der installierten Pakete. Dazu werden die Paketlisten neu eingelesen und neue Paketversionen installiert:
 
 \begin{lstlisting}[style=customc]
-apt-get update && apt-get upgrade
+apt-get update && apt-get dist-upgrade
 \end{lstlisting}
 
-Um nicht ausschließlich mit root-Rechten zu arbeiten wird für jedes Teammitglied ein eigener Benutzer mit Homeverzeichnis eingerichtet:
+Um nicht ausschließlich mit root-Rechten zu arbeiten wird für jedes Teammitglied ein eigener Benutzer mit Homeverzeichnis eingerichtet und ein vordefiniertes Passwort gesetzt:
 
 \begin{lstlisting}[style=customc]
 useradd -d /home/mstroh -s /bin/bash -m mstroh
+passwd mstroh
 useradd -d /home/dschwenk -s /bin/bash -m dschwenk
+passwd dschwenk
 \end{lstlisting}
 
-Um diesen Benutzern die Ausführung von Kommandos mit root-Rechten dennoch zu ermöglichen, werden diese Benutzer in die Gruppe \textit{sudo} aufgenommen
+Wird bei der Installation von Debian ein root-Passwort angegeben, wird das Programm \textit{sudo} nicht installiert. Dies ist bei dem uns vorliegen vServer der Fall. Um den Benutzern ohne den Wechsel zum Benutzer root die Ausführung von Programmen mit privilegierten Berechtigungen zu ermöglichen, wird das Programm \textit{sudo} über \textit{apt-get install sudo} installiert. Die Benutzer werden in die Gruppe \textit{sudo} aufgenommen:
 
 \begin{lstlisting}[style=customc]
-sudo adduser mstroh sudo
-sudo adduser dschwenk sudo
+adduser mstroh sudo
+adduser dschwenk sudo
 \end{lstlisting}
 
-Damit ist die Grundkonfiguration des vServers abgeschlossen. %TODO .. wirklich? fehlt  noch was? netzwerkconfig o.ä?
+Zudem müssen die Benutzer in die Datei /etc/sudoers aufgenommen werden:
+
+\begin{lstlisting}[style=customc]
+dschwenk ALL=(ALL:ALL) ALL
+mstroh ALL=(ALL:ALL) ALL
+\end{lstlisting}
+
+Die Benutzer können somit über \textit{sudo} Aktionen, für die privligierte Berechtigungen notwendig sind, durchführen. Damit ist die Grundkonfiguration des vServers abgeschlossen. %TODO .. wirklich? fehlt  noch was?
 
 
 \subsection{Konfiguration Serverdienste}
 \label{subsec:Konfiguration Serverdienste}
 
-- Konfiguation von Diensten wie SSH (Public Key Authentifizierung einrichten)\\
-- beachten, dass Server-SSH-Dienst von Port 22 auf anderen Port gelegt wird (z.b 10022), da Honeypot-SSH-Dienst auf Port 22 laufen sollte\\
-- vielelicht hinweis, dass über port scanner der normale ssh dienst trotzdem gefunden wird\\
+Das System wurde von providerdienste.de mit einem aktiven SSH-Dienst ausgeliefert. Da der Login eines root-Benutzers über SSH aus Sicherheitsgründen vermieden werden sollte, wird nachfolgend eine Public-Key-Authentifizierung für die Benutzeraccounts der Teammitglieder konfiguriert.\\
 
-Das System wurde von providerdienste.de mit einem aktiven SSH-Dienst ausgeliefert. ..\\
-
-Damit eine Authentifizieurng stattfinden kann, muss im Benutzerverzeichnis der Teammitglieder auf dem Server ein .ssh-Verzeichnis angelegt werden. In diese Verzeichnise wird jeweils der öffentliche Schlüssel in die Datei \textit{authorized\_keys} abegelegt.
+Damit eine Public-Key-Authentifizieurng stattfinden kann, muss im jeweiligen Benutzerverzeichnis auf dem Server ein \textit{.ssh}-Verzeichnis mit entsprechenden Berechtigungen angelegt werden.
 
 \begin{lstlisting}[style=customc]
-cat .ssh/id_dsa.pub | ssh heinz@server 'cat >> .ssh/authorized_keys'
+mkdir ~/.ssh
+chmod 700 ~/.ssh
 \end{lstlisting}
 
+Auf dem lokalen System der Teammitglieder wird jeweils das Schlüsselpaar erzeugt:
+
+\begin{lstlisting}[style=customc]
+ssh-keygen -t rsa -C "Kommentar"
+\end{lstlisting}
+
+In das oben erzeugte \textit{.ssh}-Verzeichnis wird jeweils der öffentliche Schlüssel in die Datei \textit{authorized\_keys} abegelegt:
+
+\begin{lstlisting}[style=customc]
+cat id_dsa.pub | ssh username@server 'cat >> .ssh/authorized_keys'
+\end{lstlisting}
+
+Die Berechtigungen auf die Datei \textit{authorized\_keys} wird jeweils über \textit{chmod 600 ~/.ssh/authorized\_keys} angepasst.\\
 
 Um die Authentifizierung via Passwort zu deaktivieren wird die die \textit{sshd\_config} unter \textit{/etc/ssh/} wie folgt angepasst:
 
@@ -70,10 +89,10 @@ UsePAM no
 Ebenfalls wird der Parameter \textit{PermitRootLogin} auf \textit{no} gesetzt, um einen zukünftigen Login des root-Benutzers zu deaktivieren. Abschließend wird der SSH-Dienst mit einem
 
 \begin{lstlisting}[style=customc]
-service ssh restart
+/etc/init.d/ssh restart
 \end{lstlisting}
 
-neugestartet. Von nun an ist nur noch eine Anmeldung über die Benutzeraccounts der Teammitglieder in Kombination mit einer Public-Key-Authentifizierung möglich.
+neu gestartet. Von nun an ist nur noch eine Anmeldung über die Benutzeraccounts der Teammitglieder in Kombination mit einer Public-Key-Authentifizierung möglich.
 
 \section{SSH-Honeypot}
 \label{sec:SSH-Honeypot}
@@ -88,7 +107,7 @@ neugestartet. Von nun an ist nur noch eine Anmeldung über die Benutzeraccounts 
 % ausführliche Beschreibung Kippo + Dateien\\
 % http://resources.infosecinstitute.com/tracking-attackers-honeypot-part-2-kippo/
 
-Dieses Kapitel beschreibt die Vorgehensweise zur Installation und Konfiguration von einem SSH-Honeypot auf Basis von Kippo. Dieser SSH-Honeypot soll wie für SSH üblich auf Port 22 eingerichtet werden. Da aktuell der standard SSH-Dienst auf Port 22 läuft, muss dieser zuvor angepasst werden. Dazu wird der Port in der Konfigurationsdatei \textit{etc/ssh/sshd\_config} auf Port 10022 abgeändert und der Dienst anschließend via \textit{service sshd restart} neugestartet.
+Dieses Kapitel beschreibt die Vorgehensweise zur Installation und Konfiguration von einem SSH-Honeypot auf Basis von Kippo. Dieser SSH-Honeypot soll wie für SSH üblich auf Port 22 eingerichtet werden. Da aktuell der standard SSH-Dienst auf Port 22 läuft, muss dieser zuvor angepasst werden. Dazu wird der Port in der Konfigurationsdatei \textit{etc/ssh/sshd\_config} auf Port 10022 abgeändert und der Dienst anschließend neu gestartet.\\
 
 Damit Kippo lauffähig ist, sind einige zusätzliche Pakete notwendig\footnote{ Kippo Abhängigkeiten: \url{https://github.com/desaster/kippo\#requirements}}. Diese werden, ebenso wie der git-Client für einen einfachen Download des Kippo-Projekts, installiert:
 
@@ -103,7 +122,7 @@ Einer Ausführung von Befehlen oder Diensten mit root-Rechten sollte stets wohl 
 useradd -d /home/kippo -s /bin/bash -m kippo -g sudo
 \end{lstlisting}
 
-Um auf einem Linux-System einen Port kleiner 1024 ("`well known ports"') zu verwenden sind root-Rechte erforderlich. Genau dies soll für den SSH-Honeypot-Dienst wie oben beschrieben vermieden werden. Um auch einem normalen Benutzer die Verwendung eines Ports kleiner 1024 zu ermöglichen, wird auf das Programm \textit{AuthBind}\footnote{ \textit{AuthBind}: \url{http://man.cx/authbind(1)}} zurückgegriffen. AuthBind ermöglicht es auch Benutzern auf priviliergte Ports zuzugreifen. Die Installation von Authbind erfolgt via:
+Um auf einem Linux-System einen Port kleiner 1024 ("`well known ports"') zu verwenden sind root-Rechte erforderlich. Genau dies soll für den SSH-Honeypot-Dienst wie oben beschrieben vermieden werden. Um auch einem normalen Benutzer die Verwendung eines Ports kleiner 1024 zu ermöglichen, wird auf das Programm \textit{AuthBind}\footnote{ \textit{AuthBind}: \url{http://man.cx/authbind(1)}} zurückgegriffen. Die Installation von Authbind erfolgt via:
 
 \begin{lstlisting}[style=customc]
 apt-get install authbind
@@ -139,17 +158,41 @@ Der Parameter \textit{--deep} sorgt dafür, dass nicht nur das direkt folgende P
 
 Parameter erklären ...\\
 
-Nach Ausführung des "`Kippo-Start-Skript"' läuft der Prozess im Hintergrund. In Folge dessen wird auch das Kippo-Logfile angelegt, in dem Zugriffe auf den SSH-Honeypot-Dienst dokumentiert werden. Änderungen in diesem Logfile können über
+Nach Ausführung des Kippo-Startskript \textit{start.sh} läuft der Prozess im Hintergrund. In Folge dessen wird auch das Kippo-Logfile angelegt, in dem Zugriffe auf den SSH-Honeypot-Dienst dokumentiert werden. Änderungen in diesem Logfile können über
 
 \begin{lstlisting}[style=customc]
 tail -f /home/kippo/kippo/log/
 \end{lstlisting}
 
-direkt verfolgt werden. Von nun an kann auch eine Verbindung auf Port 22 aufgebaut werden:
+direkt verfolgt werden. Von nun an kann auch eine Verbindung auf Port 22 aufgebaut werden. Nicht zu vergessen ist, dass der SSH-Dienst auf Port 10022, der die Verbindung der Projektmitarbeiter ermöglicht, durch einen Portscanner wie NMap aufgespürt werden kann.
 
-Die Anpassung des Banners kann in der Konfigurationsdatei von Kippo vorgenommen werden.
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=1.0\textwidth]{img/nmap_ssh.png}
+	\caption{Ausgabe Portscanner Nmap gegen das Honeypot-System}
+	\label{fig:nmap_ssh}
+\end{figure}
 
-Nicht zu vergessen ist, dass der SSH-Dienst auf Port 10022, der die Verbindung der Projektmitarbeiter ermöglicht, durch einen Portscanner wie NMap aufgespürt werden kann.
+Das Kippo-SSH-Banner, welches in Abbildung \ref{fig:nmap_ssh} zu erkennen ist, kann über die Kippo-Konfigurationsdatei \textit{kipp.cfg} angepasst werden. In dieser Konfigurationsdatei können ebenfalls folgende Einstellungen vorgenommen werden:
+
+\begin{itemize}
+\item Verzeichnis, in die Kippo eine Logdatei mit allen Aktivitäten schreibt. Alternativ kann eine Datenbank zur Protokollierung verwendet werden. Aus Zeit- und Performancegründen entscheidet sich das Projektteam für die Logdatei.
+\item x,y ergänzen, siehe % https://www.edgis-security.org/honeypot/kippo/
+\item
+\end{itemize}
+
+Die Kombinationen an Benutzernamen und Passwörter, mit denen ein Login über den SSH-Honeypot möglich ist, kann in der Datei \textit{userdb.txt} spezifiziert werden. Standardmäßig ist hier der Benutzername \textit{root} mit dem Passwort \textit{123456} hinterlegt. Um einem Angreifer eine größere Angriffsfläche zu bieten, wird diese List um folgende Einträge ergänzt:
+
+\begin{lstlisting}[style=customc]
+root:123456
+root:root
+root:r00t
+admin:123456
+admin:admin
+admin:password
+\end{lstlisting}
+
+Damit ist die Installation und grundlegende Konfiguration des SSH-Honeypots abgeschlossen.
 
 \subsection{Kippo-Logfile auswerten}
 \label{subsec:Kippo-Logfile auswerten}
@@ -165,13 +208,15 @@ Wie dem Kippo-Logfile unter x.y zu entnehmen ist, werden Benutzernamen und Passw
 % http://bob.k6rtm.net/kippowho.html
 
 \begin{lstlisting}[style=customc]
-grep ' login attempt ' kippo.log |
+grep ' login attempt ' $KIPPO_LOG |
   awk '{print ($9)}' |
   sort |
-  uniq > user.txt
+  uniq |
+  sed -r 's/]|\[//g' > user.txt
+
 \end{lstlisting}
 
-Ebenfalls werden Passwörter extrahiert:
+Hierdurch erhalten wir eine Liste von Kombinationen aus Benutzernamen und Passwörter in der Form \textit{username/passwort}. Passwörter werden zudem separat ohne Benutzernamen extrahiert. Passwortduplikate werden hierbei nicht entfernt, um daraus aussagekräftige Statistiken generieren zu können.
 
 \begin{lstlisting}[style=customc]
 grep ' login attempt ' kippo.log |
@@ -180,13 +225,25 @@ grep ' login attempt ' kippo.log |
   sed "s|]||g" > pw.txt
 \end{lstlisting}
 
-Passwortduplikate werden hierbei nicht entfernt, um daraus aussagekräftige Statistiken generieren zu können.
+Die Ausführung dieser Befehle wird über ein Bash-Skript realisiert. Das vollständige Skript ist im Anhang unter x.y zu finden.
+Die Auswertung der Passwörter erfolgt über Pipal Password Analyzer\footnote{ Pipal Password Analyzer: \url{https://github.com/digininja/pipal}}. Dieses open source Werkzeug erstellt Statistiken über die am häufigsten eingegeben Passwörter, über Zusammensetzung der Passwörter aus verschiedenen Zeichenklassen sowie Passwortlänge. Zudem erstellt es dazu "`Text-Grafiken"'. Der Pipal Password Analyzer basiert auf \textit{ruby}, was durch \textit{apt-get install ruby} installiert wird. Der Download des Werkzeugs selbst erfolgt von der Projektseite auf Github:
 
+\begin{lstlisting}[style=customc]
+git clone https://github.com/digininja/pipal.git
+\end{lstlisting}
 
-- Auswertung der Passwörter (diese müssen zuerst geparst werden)\\
+Anschließend können Statistiken via
+
+\begin{lstlisting}[style=customc]
+pipal.rb /pfad/zur/passwortdatei Ausgabedatei
+\end{lstlisting}
+
+erzeugt werden. Eine dieser Statistiken ist im Anhang unter x.y zu finden.
+
+%- Auswertung der Passwörter (diese müssen zuerst geparst werden)\\
 % https://github.com/digininja/pipal
 % https://digi.ninja/blog/pipal_kippo.php
-- alternativ Kippo Graph
+% - alternativ Kippo Graph
 % https://github.com/ikoniaris/kippo-graph
 
 \subsection{Firewallregeln erstellen}
@@ -203,15 +260,15 @@ cat logfile.log |
   uniq > unique-ips.txt
 \end{lstlisting}
 
-Die Generierung der Firwallregeln geschieht automatisiert über nachfolgendes Skript:
+Die Generierung der Firwallregeln geschieht über nachfolgendes Skript:
 
-\begin{lstlisting}[style=customc]
+\begin{lstlisting}[language=bash,style=customccolor]
 #!/bin/bash
 #
 # set variables
 FW="/sbin/iptables"
-IPFILE="/home/dschwenk/ipfile.txt"
-BACKUPFILE="/home/dschwenk/backupfile.txt"
+IPFILE="/home/dschwenk/kippo-data/ips.txt"
+BACKUPFILE="/home/dschwenk/firewall/iptables-backup.txt"
 
 # backup current rules
 iptables-save > $BACKUPFILE
@@ -277,7 +334,18 @@ Nach der erfolgreichen Installation des Clients müssen diesem Berechtigungen zu
 gdrive list
 \end{lstlisting}
 
-Infolge dessen wird eine Aufforderung zum Besuch der Google-Drive-Website zur Authentifizierung ausgegeben. Somit ist eine Verbindung zwischen dem Client und dem Google Drive-Dienst hergestellt.
+Infolge dessen wird eine Aufforderung zum Besuch der Google-Drive-Website zur Authentifizierung ausgegeben. Somit ist eine Verbindung zwischen dem Client und dem Google Drive-Dienst hergestellt. Das Backup selbst wird über das Skript unter \ref{subsec:Automatisierung} erstellt und hochgeladen.
+
+
+\subsection{Automatisierung}
+\label{subsec:Automatisierung}
+
+bla all die vorherigen schritte etc. automatisieren.\\
+dazu skript erstellt, dieses wird einmal täglich ausgeführt.
+
+
+
+
 
 In die Archivierung fließen sämtliche Log- und Analysedaten sowie Konfigurationsdateien ein. Dazu gehören:
 
@@ -291,18 +359,9 @@ In die Archivierung fließen sämtliche Log- und Analysedaten sowie Konfiguratio
 
 Für einen effizienten Upload werden die oben genannten Dateien alle 24 Stunden zu einem komprimierten zip-Archiv zusammengefasst und auf den Cloud-Speicher hochgeladen. Um diesen Vorgang zu automatisieren wird folgendes Bash-Skript angelegt:
 
-\begin{lstlisting}[style=customc]
-#!/bin/bash
-#
-# set up variables
-DATE=`date +%Y%m%d_%H-%M`
-FILENAME=$DATE_backup.tar.gz
-
-# create zip archive
-tar xyz $FILENAME
-
-# upload zip archive
-gdrive upload $FILENAME
-\end{lstlisting}
-
-Ausgeführt wird dieses Skript täglich um 6:00 Uhr mit Hilfe eines cronjobs. Die Übertragung der Daten erfolgt verschlüsselt. Ein möglicher Angreifer kann so den Datenstrom nicht nachvollziehen. %TODO .. wirklich? .. man in the middle?
+\lstinputlisting
+    [caption={Skript zur Extraktion von Benutzernamen und Passwörter aus Kippo-Logfile}
+       \label{lst:mitm_onmsg},
+       captionpos=b,language=bash,style=customccolor]
+ {listings/do_all.sh}
+ 
