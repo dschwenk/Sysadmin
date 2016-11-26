@@ -200,7 +200,7 @@ Damit ist die Installation und grundlegende Konfiguration des SSH-Honeypots abge
 % - extract uniq ips aus kippo logfile \\
 % https://bruteforce.gr/extracting-unique-ips-from-logfile.html \\
 
-Die IP-Adressen von Angreifern werden im Kippo.log-Logfile neben zahlreichen Informationen wie eingegeben Benutzernamen, Passwörter und Befehle gespeichert. Ein Auszug aus einem Kippo-Logfile ist im Anhang unter x zu finden. Aus diesen Informationen sollen Statistiken zu Benutzernamen und Passwörter sowie automatisiert Firewallregeln erstellt werden, um Angriffe von diesen IPs zeitweise zu verhindern.
+Die IP-Adressen von Angreifern werden im Kippo.log-Logfile neben zahlreichen Informationen wie eingegeben Benutzernamen, Passwörter und Befehle gespeichert. Ein Auszug aus einem Kippo-Logfile ist im Anhang unter x zu finden. Aus diesen Informationen sollen Statistiken zu Benutzernamen und Passwörter sowie automatisiert Firewallregeln erstellt werden, um Angriffe von diesen IPs zu verhindern.
 
 Wie dem Kippo-Logfile unter x.y zu entnehmen ist, werden Benutzernamen und Passwörter als Teile von Zeichenketten im Logfile abgelegt. Für eine Auswertung müssen diese aus dem Logfile extrahiert werden. Dies erfolgt mit Hilfe der Werkzeuge \textit{grep} und \textit{awk}. Duplikate werden durch \textit{sort} und \textit{uniq} entfernt.
 
@@ -226,7 +226,7 @@ grep ' login attempt ' kippo.log |
 \end{lstlisting}
 
 Die Ausführung dieser Befehle wird über ein Bash-Skript realisiert. Das vollständige Skript ist im Anhang unter x.y zu finden.
-Die Auswertung der Passwörter erfolgt über Pipal Password Analyzer\footnote{ Pipal Password Analyzer: \url{https://github.com/digininja/pipal}}. Dieses open source Werkzeug erstellt Statistiken über die am häufigsten eingegeben Passwörter, über Zusammensetzung der Passwörter aus verschiedenen Zeichenklassen sowie Passwortlänge. Zudem erstellt es dazu "`Text-Grafiken"'. Der Pipal Password Analyzer basiert auf \textit{ruby}, was durch \textit{apt-get install ruby} installiert wird. Der Download des Werkzeugs selbst erfolgt von der Projektseite auf Github:
+Die Auswertung der Passwörter erfolgt über \textit{Pipal Password Analyzer}\footnote{ \textit{Pipal Password Analyzer}: \url{https://github.com/digininja/pipal}}. Dieses open source Werkzeug erstellt Statistiken über die am häufigsten eingegeben Passwörter, über Zusammensetzung der Passwörter aus verschiedenen Zeichenklassen sowie Passwortlänge. Zudem erstellt es dazu "`Text-Grafiken"'. Der \textit{Pipal Password Analyzer} basiert auf \textit{ruby}, was durch \textit{apt-get install ruby} installiert wird. Der Download des Werkzeugs selbst erfolgt von der Projektseite auf Github:
 
 \begin{lstlisting}[style=customc]
 git clone https://github.com/digininja/pipal.git
@@ -297,17 +297,18 @@ Dieses Skript wird über einen cronjob einmal täglich ausgeführt.
 \section{Web-Honeypot}
 \label{sec:Web-Honeypot}
 
+...\\
 
-\section{sonstiges}
-\label{sec:sonstiges}
+\section{Archivierung und Automatisierung}
+\label{sec:Archivierung und Automatisierung}
 
 - passende überschriften finden\\
 - archivieren von logfiles\\
 - benachrichtigung bie angriff\\
 - reverse lookup ip -adressen (+ darstellung auf karte? geo-ip?\\
 
-\subsection{Archivierung von Daten}
-\label{subsec:Archivierung von Daten}
+\subsection{Archivierung von Daten auf Cloud-Speicher}
+\label{subsec:Archivierung von Daten auf Cloud-Speicher}
 
 Um der Soll-Anforderung nach der Archivierung von Logdaten sowie Analyseergebnisse zu entsprechen, werden diese Daten automatisiert auf einem Cloud-Speicher abgelegt. Dieses Archivierung stellt sicher, dass auf diese Daten selbst dann zurückgegriffen werden kann, wenn das System kompromittiert wurde oder nicht weiter zur Verfügung steht. Eine Marktanalyse ergibt eine Vielzahl an verfügbaren Cloud-Speichern. Das Projektteam entscheidet sich auf Grund der Verfügbarkeit eines Linux-Clients, der einfachen Installation und Konfiguration dieses Clients sowie dessen Möglichkeit zur automatischen Ausführung via Kommandozeile für Google Drive\footnote{ Google Drive: \url{https://www.google.com/intl/de_de/drive/}}. Anzumerken ist, dass dieser Client nicht von Google selbst, sondern von Petter Rasmussen in einem open source Projekt entwickelt wird\footnote{ Peter Rasmussen gDrive command line tool: \url{https://github.com/prasmussen/gdrive}}. Der Download der aktuellen Version 2.1 des 64-Bit-Clients für Linux erfolgt durch:
 
@@ -340,21 +341,24 @@ Infolge dessen wird eine Aufforderung zum Besuch der Google-Drive-Website zur Au
 \subsection{Automatisierung}
 \label{subsec:Automatisierung}
 
-bla all die vorherigen schritte etc. automatisieren.\\
-dazu skript erstellt, dieses wird einmal täglich ausgeführt.
+In den vorherigen Kapitel wurde die Vorgehensweise zur Extraktion, Auswertung und Weiterverarbeitung von Daten erläutert. Für einzelne Aufgaben wurden dazu Skripte erstellt. Um diese Skripte nun nicht regelmäßig von Hand ausführen zu müssen, werden diese einzelne Skripte über ein Skript gesteuert und täglich ausgeführt. Dieses Skript führt folgende Aufgaben aus:
 
-
-
-
+\begin{itemize}
+\item Daten aus Kippo-Logdatei extrahieren
+\item extrahierte Daten auswerten
+\item bestehende Firewallregeln sichern sowie neue Regeln erstellen
+\item x.y
+\item Archivierung von Logdaten sowie Analyseergebnissen
+\end{itemize}
 
 In die Archivierung fließen sämtliche Log- und Analysedaten sowie Konfigurationsdateien ein. Dazu gehören:
 
 \begin{itemize}
-\item Kippo-Konfiguration und Logfile
-\item x.y Logfile
+\item Kippo-Konfiguration und Logdatei
 \item Auswertung der Benutzer- und Passwortdaten
 \item Auswertung der IP-Adressen
 \item Konfigurationsdateien von iptables
+\item x.y
 \end{itemize}
 
 Für einen effizienten Upload werden die oben genannten Dateien alle 24 Stunden zu einem komprimierten zip-Archiv zusammengefasst und auf den Cloud-Speicher hochgeladen. Um diesen Vorgang zu automatisieren wird folgendes Bash-Skript angelegt:
@@ -365,3 +369,10 @@ Für einen effizienten Upload werden die oben genannten Dateien alle 24 Stunden 
        captionpos=b,language=bash,style=customccolor]
  {listings/do_all.sh}
  
+Dieses Skript soll täglich ausgeführt werden. Dies kann über einen \textit{cronjob} erreicht werden. Da für die Konfiguration von Firewallregeln via \textit{iptbles} root-Berechtigungen notwendig sind, muss dieses Skript mit privilegierten Berechtigungen ausgeführt werden. Über \textit{sudo crontab -e} wird ein \textit{cronjob} für den root-Benutzer eingerichtet:
+
+\begin{lstlisting}[style=customc]
+@daily /home/dschwenk/do_all_stuff.sh
+\end{lstlisting}
+
+Damit wird das Skript einmal täglich ausgeführt.
