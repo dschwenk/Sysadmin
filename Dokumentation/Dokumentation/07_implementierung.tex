@@ -208,7 +208,7 @@ Wie dem Kippo-Logfile unter x.y zu entnehmen ist, werden Benutzernamen und Passw
 % http://bob.k6rtm.net/kippowho.html
 
 \begin{lstlisting}[style=customc]
-grep ' login attempt ' $KIPPO_LOG |
+grep ' login attempt ' kippo.log |
   awk '{print ($9)}' |
   sort |
   uniq |
@@ -341,7 +341,7 @@ Infolge dessen wird eine Aufforderung zum Besuch der Google-Drive-Website zur Au
 \subsection{Automatisierung}
 \label{subsec:Automatisierung}
 
-In den vorherigen Kapitel wurde die Vorgehensweise zur Extraktion, Auswertung und Weiterverarbeitung von Daten erläutert. Für einzelne Aufgaben wurden dazu Skripte erstellt. Um diese Skripte nun nicht regelmäßig von Hand ausführen zu müssen, werden diese einzelne Skripte über ein Skript gesteuert und täglich ausgeführt. Dieses Skript führt folgende Aufgaben aus:
+In den vorherigen Kapitel wurde die Vorgehensweise zur Extraktion, Auswertung und Weiterverarbeitung von Daten erläutert. Für einzelne Aufgaben wurden dazu Skripte erstellt. Um diese Skripte nun nicht regelmäßig von Hand ausführen zu müssen, werden diese einzelne Skripte über ein zentrales Skript gesteuert und täglich ausgeführt. Dieses Skript führt folgende Aufgaben aus:
 
 \begin{itemize}
 \item Daten aus Kippo-Logdatei extrahieren
