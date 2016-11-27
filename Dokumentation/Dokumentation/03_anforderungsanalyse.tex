@@ -8,15 +8,15 @@ Die Anforderungen an das Honeypot-System werden in Muss-, Kann- und Soll-Kriteri
 \label{sec:Muss-Kriterien}
 \begin{itemize}
 \item Honeypot ist über das Internet erreichbar
-\item Honeypot darf keinerlei Gefahr für andere Systeme darstellen
-\item Honeypot muss jederzeit deaktivierbar sein
+\item Die Gefahr einer Übernahme und folglich eines Missbrauchs des Honeypots muss minimal gehalten werden \textcolor{red}{(Wie erreichen wir das? Bzw. sollten wir den Punkt vll entfernen? Haben wir derzeit eine Möglichkeit festzustellen, dass die Kiste übernommen wurde? Ausgehenden Traffic überwachen?)}
+\item Honeypot muss jederzeit deaktivierbar sein \textcolor{red}{(Ist das über die Web-Oberfläche jederzeit möglich, beispielsweise auch nach Warnung durch Email an uns?)}
 \item Angreifer darf keinerlei Möglichkeit zur Interaktion mit dem Host-Betriebssystem haben
-\item Angreifer darf keine bzw. nur gefälschte Antworten auf Anfragen erhalten
+\item Angreifer darf keine bzw. nur gefälschte Antworten auf Anfragen erhalten \textcolor{red}{(Ist das bei Kippo so? Nein oder?)}
 \item Honeypot muss mindestens einen, besser jedoch mehrere Dienste, wie beispielsweise HTTP, SSH oder FTP, simulieren/anbieten
 \item Honeypot muss ein realistisch wirkendes Angriffsziel darstellen
 \item Angriffe werden geloggt
-\item Ein- und ausgehender Netzwerkverkehr muss (überwacht und) geloggt werden 
-\item Protokollierte Daten dürfen durch Angreifer nicht verändert werden können
+\item Ein- und ausgehender Netzwerkverkehr muss (überwacht und) geloggt werden \textcolor{red}{(Direkte Umsetzung von Punkt2?)}
+\item Protokollierte Daten dürfen durch Angreifer nicht verändert werden können \textcolor{red}{(Wie überprüfen wir das?)}
 
 \end{itemize}
 
@@ -25,8 +25,8 @@ Die Anforderungen an das Honeypot-System werden in Muss-, Kann- und Soll-Kriteri
 \section{Soll-Kriterien}
 \label{sec:Soll-Kriterien}
 \begin{itemize}
-\item Automatische Benachrichtigung, wenn System angegriffen wird
-\item Protokollierung und ggf. Forwarding von Log-Files dürfen für den Angreifer nicht sichtbar sein
+\item Automatische Benachrichtigung, wenn System angegriffen wird \textcolor{red}{(Macht das derzeit überhaupt Sinn? Realisierbar? Wie?)}
+\item Protokollierung und ggf. Forwarding von Log-Files dürfen für den Angreifer nicht sichtbar sein \textcolor{red}{(Bei Kippo nur durch Übernahme machbar oder? Eigenversuch auf Kippo verbinden)}
 \item Automatisierte Auswertung von Logdaten
 \item Logdateien / ausgewertete Daten werden automatisch separat gespeichert (extra System, Cloud-Speicher)
 \end{itemize}
