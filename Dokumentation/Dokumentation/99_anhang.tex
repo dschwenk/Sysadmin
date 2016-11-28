@@ -3,20 +3,31 @@
 \chapter{Anhang}
 \label{ch:Anhang}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Gantt-Diagramm}
 \label{app:Gantt-Diagramm}
-
 
 \begin{center}
 \includegraphics[scale=0.83]{img/gantt_tasks.png}
 \end{center}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 
 \begin{center}
 \includegraphics[scale=0.50]{img/gantt_diagram.png}
 \end{center}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+\section*{Ausschnitt aus Kippo-Logdatei}
+\label{app:Ausschnitt aus Kippo-Logdatei}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 
 \section*{Benutzernamen und Passwörter extrahieren}
@@ -29,11 +40,11 @@
  {listings/extract_userdata.sh}
  
  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\newpage
  
- \newpage
- 
-\section*{Passwortstatistik}
-\label{app:Passwortstatistik}
+\section*{Pipal Passwortstatistik}
+\label{app:Pipal Passwortstatistik}
 
 \lstinputlisting
     [caption={Passwortstatistik generiert durch Pipal Password Analzyer}
@@ -41,4 +52,28 @@
        captionpos=b,language={}]
  {listings/pipal_statistik.txt}
  
- \newpage 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\newpage 
+ 
+\section*{Ausgabe iptables-save}
+\label{app:Ausgabe iptables-save}
+
+\lstinputlisting
+    [caption={gekürzte Ausgabe von iptables-save}
+       \label{lst:mitm_onmsg},
+       captionpos=b,language={}]
+ {listings/iptables-backup.txt}
+ 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\newpage 
+ 
+\section*{Auswertung reverse-DNS-Lookup}
+\label{app:Auswertung reverse-DNS-Lookup}
+
+\lstinputlisting
+    [caption={Ausgabe der reverse-DNS-Auswertung}
+       \label{lst:reverse_dns},
+       captionpos=b,language={}]
+ {listings/reverse-dns.txt}

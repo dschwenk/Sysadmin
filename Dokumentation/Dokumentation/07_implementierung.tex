@@ -154,9 +154,7 @@ Damit Kippo mit Hilfe von AuthBind ausgeführt wird, muss das "`Kippo-Start-Skri
 authbind --deep twistd -y kippo.tac -l log/kippo.log --pidfile kippo.pid
 \end{lstlisting}
 
-Der Parameter \textit{--deep} sorgt dafür, dass nicht nur das direkt folgende Programm, sondern auch alle Programme die folge dieses Aufrufs sind, unter \textit{authbind} ausgeführt werden. twistd, xy, wird zudem eine Logdatei sowie ein Pidfile übergeben. In diesem wird die Prozess-ID abgelegt.
-
-Parameter erklären ...\\
+Der Parameter \textit{--deep} sorgt dafür, dass nicht nur das direkt folgende Programm, sondern auch alle Programme die folge dieses Aufrufs sind, unter \textit{authbind} ausgeführt werden. Kippo selbst basiert auf Twisted, einer "`Event-basierten Netzwerkengine"'\footnote{ \textit{Twisted - Building the engine of your internet}: \url{http://twistedmatrix.com/trac/}} für Python. twistd\footnote{ \textit{twistd}: \url{https://linux.die.net/man/1/twistd}} wird über den Parameter "`\textit{y}"' die Python-Applikation, zudem eine Logdatei sowie ein Pidfile übergeben. In diesem wird die Prozess-ID abgelegt.
 
 Nach Ausführung des Kippo-Startskript \textit{start.sh} läuft der Prozess im Hintergrund. In Folge dessen wird auch das Kippo-Logfile angelegt, in dem Zugriffe auf den SSH-Honeypot-Dienst dokumentiert werden. Änderungen in diesem Logfile können über
 
@@ -173,12 +171,12 @@ direkt verfolgt werden. Von nun an kann auch eine Verbindung auf Port 22 aufgeba
 	\label{fig:nmap_ssh}
 \end{figure}
 
-Das Kippo-SSH-Banner, welches in Abbildung \ref{fig:nmap_ssh} zu erkennen ist, kann über die Kippo-Konfigurationsdatei \textit{kipp.cfg} angepasst werden. In dieser Konfigurationsdatei können ebenfalls folgende Einstellungen vorgenommen werden:
+Das Kippo-SSH-Banner, welches in Abbildung \ref{fig:nmap_ssh} zu erkennen ist, kann über die Kippo-Konfigurationsdatei \textit{kippo.cfg} angepasst werden. In dieser Konfigurationsdatei können ebenfalls unter anderem folgende Einstellungen vorgenommen werden:
 
 \begin{itemize}
 \item Verzeichnis, in die Kippo eine Logdatei mit allen Aktivitäten schreibt. Alternativ kann eine Datenbank zur Protokollierung verwendet werden. Aus Zeit- und Performancegründen entscheidet sich das Projektteam für die Logdatei.
-\item x,y ergänzen, siehe % https://www.edgis-security.org/honeypot/kippo/
-\item
+\item Angabe des Verzeichnisses, in dem die Datei \textit{fs.pickle} mit dem virtuellen Dateisystem liegt
+\item Angabe einer Datei, die vordefinierten Antworten auf diverse Kommandos enthält. Die Ausgabe dieser Antworten erhält ein Angreifer nach einem erfolgreichen Login bei der Eingabe von Standardkommandos
 \end{itemize}
 
 Die Kombinationen an Benutzernamen und Passwörter, mit denen ein Login über den SSH-Honeypot möglich ist, kann in der Datei \textit{userdb.txt} spezifiziert werden. Standardmäßig ist hier der Benutzername \textit{root} mit dem Passwort \textit{123456} hinterlegt. Um einem Angreifer eine größere Angriffsfläche zu bieten, wird diese List um folgende Einträge ergänzt:
@@ -200,9 +198,9 @@ Damit ist die Installation und grundlegende Konfiguration des SSH-Honeypots abge
 % - extract uniq ips aus kippo logfile \\
 % https://bruteforce.gr/extracting-unique-ips-from-logfile.html \\
 
-Die IP-Adressen von Angreifern werden im Kippo.log-Logfile neben zahlreichen Informationen wie eingegeben Benutzernamen, Passwörter und Befehle gespeichert. Ein Auszug aus einem Kippo-Logfile ist im Anhang unter x zu finden. Aus diesen Informationen sollen Statistiken zu Benutzernamen und Passwörter sowie automatisiert Firewallregeln erstellt werden, um Angriffe von diesen IPs zu verhindern.
+Die IP-Adressen von Angreifern werden im Kippo.log-Logfile neben zahlreichen Informationen wie eingegeben Benutzernamen, Passwörter und Befehle gespeichert. Ein Auszug aus einem Kippo-Logfile ist im Anhang unter \textit{\nameref{app:Ausschnitt aus Kippo-Logdatei}} zu finden. Aus diesen Informationen sollen Statistiken zu Benutzernamen und Passwörter sowie automatisiert Firewallregeln erstellt werden, um Angriffe von diesen IPs zu verhindern.
 
-Wie dem Kippo-Logfile unter x.y zu entnehmen ist, werden Benutzernamen und Passwörter als Teile von Zeichenketten im Logfile abgelegt. Für eine Auswertung müssen diese aus dem Logfile extrahiert werden. Dies erfolgt mit Hilfe der Werkzeuge \textit{grep} und \textit{awk}. Duplikate werden durch \textit{sort} und \textit{uniq} entfernt.
+Wie dem Kippo-Logfile unter \textit{\nameref{app:Ausschnitt aus Kippo-Logdatei}} zu entnehmen ist, werden Benutzernamen und Passwörter als Teile von Zeichenketten im Logfile abgelegt. Für eine Auswertung müssen diese aus dem Logfile extrahiert werden. Dies erfolgt mit Hilfe der Werkzeuge \textit{grep} und \textit{awk}. Duplikate werden durch \textit{sort} und \textit{uniq} entfernt.
 
 
 % http://bob.k6rtm.net/kippowho.html
@@ -225,7 +223,7 @@ grep ' login attempt ' kippo.log |
   sed "s|]||g" > pw.txt
 \end{lstlisting}
 
-Die Ausführung dieser Befehle wird über ein Bash-Skript realisiert. Das vollständige Skript ist im Anhang unter x.y zu finden.
+Die Ausführung dieser Befehle wird über ein Bash-Skript realisiert. Das vollständige Skript ist im Anhang unter \textit{\nameref{app:Benutzernamen und Passwörter extrahieren}} zu finden.
 Die Auswertung der Passwörter erfolgt über \textit{Pipal Password Analyzer}\footnote{ \textit{Pipal Password Analyzer}: \url{https://github.com/digininja/pipal}}. Dieses open source Werkzeug erstellt Statistiken über die am häufigsten eingegeben Passwörter, über Zusammensetzung der Passwörter aus verschiedenen Zeichenklassen sowie Passwortlänge. Zudem erstellt es dazu "`Text-Grafiken"'. Der \textit{Pipal Password Analyzer} basiert auf \textit{ruby}, was durch \textit{apt-get install ruby} installiert wird. Der Download des Werkzeugs selbst erfolgt von der Projektseite auf Github:
 
 \begin{lstlisting}[style=customc]
@@ -238,7 +236,7 @@ Anschließend können Statistiken via
 pipal.rb /pfad/zur/passwortdatei Ausgabedatei
 \end{lstlisting}
 
-erzeugt werden. Eine dieser Statistiken ist im Anhang unter x.y zu finden.
+erzeugt werden. Eine dieser Statistiken ist im Anhang unter \textit{\nameref{app:Pipal Passwortstatistik}} zu finden.
 
 %- Auswertung der Passwörter (diese müssen zuerst geparst werden)\\
 % https://github.com/digininja/pipal
@@ -289,9 +287,44 @@ done < $IPFILE
 
 \end{lstlisting}
 
-Das Skript fertig zuerst über iptabales-save ein Backup der bestehenden Regeln an, welches wie unter \ref{subsec:Archivierung von Daten} beschrieben archiviert wird. Eine beispielhafte Ausgabe von iptables-save ist im Anhang unter x.y zu finden. Anschließend werden alle existierenden Regeln gelöscht. Dies geschieht explizit, um mögliche false positives, die durch dynamische IP-Adressen zustanden kommen können, nicht dauerhaft zu blockieren. Ebenfalls explizit werden über die Regeln standardmäßig alle Verbindungen akzeptiert. Damit lassen sich aus den Verbindungs-Logfiles beispielsweise Portscans nachweisen.
+Das Skript fertig zuerst über iptabales-save ein Backup der bestehenden Regeln an, welches wie unter \ref{sec:Archivierung und Automatisierung} beschrieben archiviert wird. Eine beispielhafte Ausgabe von iptables-save ist im Anhang unter \textit{\nameref{app:Ausgabe iptables-save}} zu finden. Anschließend werden alle existierenden Regeln gelöscht. Dies geschieht explizit, um keine doppelten Regelsätze zu erstellen. Dies würde die Performance von iptables unnötig mindern. Ebenfalls explizit werden über die Regeln standardmäßig alle Verbindungen akzeptiert. Damit lassen sich aus den Verbindungs-Logfiles beispielsweise Portscans nachweisen.
 
 Dieses Skript wird über einen cronjob einmal täglich ausgeführt.
+
+
+
+\subsection{IP-Adressen auswerten}
+\label{subsec:IP-Adressen auswerten}
+
+Unter \ref{sec:Kann-Kriterien} wurde eine Anforderungen für einen reverse-DNS-Lookup von Angreifer IP-Adressen aufgeführt. Die Angreifer-IP-Adressen wurde bereits durch das Skript unter \ref{subsec:Firewallregeln erstellen} extrahiert. Mit \textit{getent}\footnote{ \textit{getent}: \url{http://man7.org/linux/man-pages/man1/getent.1.html}} kann von diesen nun ein reverse-lookup erfolgen. Um dies nicht von Hand machen zu müssen, wird ein Skript erstellt:
+
+\lstinputlisting
+    [caption={Skript zur Extraktion von Benutzernamen und Passwörter aus Kippo-Logfile}
+       \label{lst:reverse_dns},
+       captionpos=b,language=bash,style=customccolor]
+ {listings/do_reverse_dns_lookup.sh}
+
+Eine beispielhafte reverse-DNS-Auswertung ist im Anhang unter \textit{\nameref{app:Auswertung reverse-DNS-Lookup}} zu finden.
+Um nicht nur eine Zuordnung von IP-Adressen zu DNS-Namen zu haben, sondern um auch ein Gefühl für die Herkunft der Angriffe zu bekommen, entschied sich das Projektteam zusätzlich zu einer geographischen Darstellung. Die Website batchgeo.com\footnote{ \textit{batchgeo.com}: \url{http://de.batchgeo.com/}} bietet einen Dienst, der anhand von gegeben Daten eine Karte erstellt. Diese gegeben Daten können beispielsweise Adressen, Koordinaten oder eben auch IP-Adressen sein. Mit Hilfe einer "`Geo-IP-Adressen-Funktion"' erstellt dieser Dienst eine Karte, auf der die IP-Adressen eingezeichnet sind. Abbildung \ref{fig:geo_ip_world} zeigt eine dieser erzeugten Karten, die die gesamte Welt abbildet.
+
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=0.94\textwidth]{img/geo_ip_world.png}
+	\caption{Karte mit Geo-Location von Angreifer-IP-Adressen}
+	\label{fig:geo_ip_world}
+\end{figure}
+
+Diese Karte zeigt deutliche, dass ein Großteil der Angriffe aus China, Europa und Nordamerika stammen. Abbildung \ref{fig:geo_ip_eu} zeigt speziell einen Ausschnitt von Europa:
+
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=0.94\textwidth]{img/geo_ip_eu.png}
+	\caption{Karte mit Geo-Location von Angreifer-IP-Adressen}
+	\label{fig:geo_ip_eu}
+\end{figure}
+
+Die Verteilung der IP-Adressen in Europa erstreckt sich hauptsächlich über Mitteleuropa. Allgemein muss diese Auswertung jedoch mit Vorsicht betrachtet werden, da die Zuordnung einer IP-Adresse zu einer Örtlichkeit einer gewissen Fehlerrate unterliegt. batchgeo.com ordnet die IP-Adresse mit Hilfe von Daten von MaxMind zu. MaxMind gibt für die Zuordnung von IP-Adressen zu Städten in Ländern wie den USA, China, Russland oder Deutschland eine Zuverlässigkeit von über 75\% an. Für andere Länder ist teilweise eine niedrigere Zuverlässigkeit gegeben, die in einigen Fällen unter 50\% liegt. Eine Auflistung je Land kann auf der Website von MaxMind\footnote{ \textit{MaxMind GeoIP2 City Accuracy}: \url{https://www.maxmind.com/en/geoip2-city-database-accuracy}} eingesehen werden.
+
 
 
 \section{Web-Honeypot}
