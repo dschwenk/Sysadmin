@@ -305,7 +305,7 @@ Unter \ref{sec:Kann-Kriterien} wurde eine Anforderungen für einen reverse-DNS-L
  {listings/do_reverse_dns_lookup.sh}
 
 Eine beispielhafte reverse-DNS-Auswertung ist im Anhang unter \textit{\nameref{app:Auswertung reverse-DNS-Lookup}} zu finden.
-Um nicht nur eine Zuordnung von IP-Adressen zu DNS-Namen zu haben, sondern um auch ein Gefühl für die Herkunft der Angriffe zu bekommen, entschied sich das Projektteam zusätzlich zu einer geographischen Darstellung. Die Website batchgeo.com\footnote{ \textit{batchgeo.com}: \url{http://de.batchgeo.com/}} bietet einen Dienst, der anhand von gegeben Daten eine Karte erstellt. Diese gegeben Daten können beispielsweise Adressen, Koordinaten oder eben auch IP-Adressen sein. Mit Hilfe einer "`Geo-IP-Adressen-Funktion"' erstellt dieser Dienst eine Karte, auf der die IP-Adressen eingezeichnet sind. Abbildung \ref{fig:geo_ip_world} zeigt eine dieser erzeugten Karten, die die gesamte Welt abbildet.
+Um nicht nur eine Zuordnung von IP-Adressen zu DNS-Namen zu haben, sondern um auch ein Gefühl für die Herkunft der Angriffe zu bekommen, entschied sich das Projektteam zusätzlich zu einer geographischen Darstellung. Die Website batchgeo.com\footnote{ batchgeo.com: \url{http://de.batchgeo.com/}} bietet einen Dienst, der anhand von gegeben Daten eine Karte erstellt. Diese gegeben Daten können beispielsweise Adressen, Koordinaten oder eben auch IP-Adressen sein. Mit Hilfe einer "`Geo-IP-Adressen-Funktion"' erstellt dieser Dienst eine Karte, auf der die IP-Adressen eingezeichnet sind. Abbildung \ref{fig:geo_ip_world} zeigt eine dieser erzeugten Karten, die die gesamte Welt abbildet.
 
 \begin{figure}[ht]
 	\centering
@@ -323,8 +323,49 @@ Diese Karte zeigt deutliche, dass ein Großteil der Angriffe aus China, Europa u
 	\label{fig:geo_ip_eu}
 \end{figure}
 
-Die Verteilung der IP-Adressen in Europa erstreckt sich hauptsächlich über Mitteleuropa. Allgemein muss diese Auswertung jedoch mit Vorsicht betrachtet werden, da die Zuordnung einer IP-Adresse zu einer Örtlichkeit einer gewissen Fehlerrate unterliegt. batchgeo.com ordnet die IP-Adresse mit Hilfe von Daten von MaxMind zu. MaxMind gibt für die Zuordnung von IP-Adressen zu Städten in Ländern wie den USA, China, Russland oder Deutschland eine Zuverlässigkeit von über 75\% an. Für andere Länder ist teilweise eine niedrigere Zuverlässigkeit gegeben, die in einigen Fällen unter 50\% liegt. Eine Auflistung je Land kann auf der Website von MaxMind\footnote{ \textit{MaxMind GeoIP2 City Accuracy}: \url{https://www.maxmind.com/en/geoip2-city-database-accuracy}} eingesehen werden.
+Die Verteilung der IP-Adressen in Europa erstreckt sich hauptsächlich über Mitteleuropa. Allgemein muss diese Auswertung jedoch mit Vorsicht betrachtet werden, da die Zuordnung einer IP-Adresse zu einer Örtlichkeit einer gewissen Fehlerrate unterliegt. batchgeo.com ordnet die IP-Adresse mit Hilfe von Daten von MaxMind zu. MaxMind gibt für die Zuordnung von IP-Adressen zu Städten in Ländern wie den USA, China, Russland oder Deutschland eine Zuverlässigkeit von über 75\% an. Für andere Länder ist teilweise eine niedrigere Zuverlässigkeit gegeben, die in einigen Fällen unter 50\% liegt. Eine Auflistung je Land kann auf der Website von MaxMind\footnote{ MaxMind GeoIP2 City Accuracy: \url{https://www.maxmind.com/en/geoip2-city-database-accuracy}} eingesehen werden.
 
+
+
+\subsection{Benachrichtigung bei Zugriff auf SSH-Honeypot}
+\label{subsec:Benachrichtigung bei Zugriff auf SSH-Honeypot}
+
+Unter \ref{sec:Kann-Kriterien} wurde eine Anforderung zur automatischen Benachrichtigung bei einem Angriff dokumentiert. Das Projektteam hat sich dazu entschieden, diese Benachrichtigung in Form einer Email-Benachrichtigung umzusetzen. Angedacht ist, eine Email dann zu versenden, wenn sich die Kippo-Logdatei ändert. Um nicht bei jeder Änderung benachrichtigt zu werden, soll in einem festen Zeitintervall auf Änderungen geprüft werden. Veränderungen an Dateien oder Verzeichnissen können unter Linux unter anderem mit \textit{inotifywait}\footnote{ \textit{inotifywait}: \url{https://linux.die.net/man/1/inotifywait}} überwacht werden. \textit{inotifywait} ist in dem Paket \textit{inotify-tools} enthalten, welches über
+
+\begin{lstlisting}[language=bash,style=customccolor]
+apt-get install inotify-tools 
+\end{lstlisting}
+
+installiert wird. Als Zeitintervall, in der auf Änderungen überprüft werden soll, wurde eine Stunde festgelegt. Dazu wird ein cronjob eingerichtet, der stündlich \textit{inotifywait} ausführt.
+
+\begin{lstlisting}[language=bash,style=customccolor]
+@hourly inotifywait -t 3599 -e modify /home/kippo/kippo/log/kippo.log && /home/dschwenk/email-alert/alert.sh
+\end{lstlisting}
+
+Als Parameter werden \textit{inotifywait} eine Zeit von 3599 Sekunden übergeben, damit sich dieser Prozess nach Ablauf dieser Zeit automatisch beendet. Würde keine Zeit angegeben werden, würde dieser Prozess bis zu einer Änderung, die in einer beliebigen Zeit in der Zukunft liegen kann, im Hintergrund weiter laufen. Stündlich würde jedoch zusätzlich ein neuer Prozess gestartet werden. Die Zeitangabe verhindert somit die Mehrfachausführung. Zusätlich wird die zu überwachende Logdatei angegeben, so wie eine Aktion, die bei einer Änderung ausgeführt werden soll. In diesem Fall soll das Skript \textit{alert.sh} ausgeführt werden, welches nachfolged aufgelistet ist:
+
+\begin{lstlisting}[language=bash,style=customccolor]
+#!/bin/bash
+
+echo "Someone accessed our SSH honeypot running on port 22" | mailx -v \
+-r "honeypot-notification@danielschwenk.de" \
+-s "SSH Honeypot Notification" \
+-S smtp="send.one.com" \
+-S smtp-use-starttls \
+-S smtp-auth=login \
+-S smtp-auth-user="honeypot-notification@danielschwenk.de" \
+-S smtp-auth-password="password" \
+-S ssl-verify=ignore \
+michael.stroh@hs-weingarten.de,daniel.schwenk@hs-weingarten.de
+\end{lstlisting}
+
+Dieses Skript sendet eine Email mit vorgegebenem Betreff und Inhalt an die beiden Projektmitglieder. Der Versand selber wird über \textit{mailx}\footnote{ \textit{mailx}: \url{https://linux.die.net/man/1/mailx}} realisiert, welches über
+
+\begin{lstlisting}[language=bash,style=customccolor]
+sudo apt-get install heirloom-mailx
+\end{lstlisting}
+
+installiert wurde. Dem \textit{mailx}-Kommando werden dazu die SMTP- und Benutzerdaten übergeben. Der Versand erfolgt mit Hilfe eines Emailaccounts, welcher beim Provider one.com\footnote{ one.com \url{https://www.one.com/de/}} angelegt wurde. Die Wahl fiel auf diesen Provider, da dieser bereits in anderen Projekten in Verwendung der Teammitglieder ist. Das in diesem Listing dargestellte Passwort wurde aus Sicherheitsgründen durch einen Platzhalter ersetzt.
 
 
 \section{Web-Honeypot}
@@ -335,10 +376,6 @@ Die Verteilung der IP-Adressen in Europa erstreckt sich hauptsächlich über Mit
 \section{Archivierung und Automatisierung}
 \label{sec:Archivierung und Automatisierung}
 
-- passende überschriften finden\\
-- archivieren von logfiles\\
-- benachrichtigung bie angriff\\
-- reverse lookup ip -adressen (+ darstellung auf karte? geo-ip?\\
 
 \subsection{Archivierung von Daten auf Cloud-Speicher}
 \label{subsec:Archivierung von Daten auf Cloud-Speicher}
