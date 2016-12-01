@@ -14,6 +14,19 @@ Die komplette Umsetzung des Projekts fand auf einem gemieteten vServer statt. Di
 \section{Schlussfolgerungen SSH-Honeypot}
 \label{sec:Schlussfolgerungen SSH-Honeypot}
 
-- großteil der passwörter sind standard passwörter
-- daraus passwort richtlinien ableiten
-- oder besser direkt Public-Key-Authentifizierung
+Wie der Statistik im Anhang unter \nameref{app:Pipal Passwortstatistik} entnommen werden kann, wurden am SSH-Honeypot-Port ingesamt 420 Passwörter eingegeben, 130 davon sind einzigartig. Die 10 meistgenutzten Passwörter machen 35,46\% aller Passworteingaben aus. Betrachtet man die 10 meistgenutzten Passwörter genauer, fällt auf, das hier vorrangig die Zeichenketten \textit{admin} und \textit{password} sowie Zahlenfolgen wie \textit{123456} vertreten sind. Die Länge der eingegeben Passwörter betrug in über 25\% der Fälle sechs Zeichen, in 15,71\% acht Zeichen und in 14,29\% vier Zeichen. Über 80\% der eingegeben Passwörter bestanden aus acht oder weniger Zeichen. Ähnlich klare Verteilungen sind bei der Zusammensetzung von Passwörter aus Zeichenklassen zu erkennen. So bestehen über 38\% der Passwörter rein aus Buchstaben, weitere 30,48\% rein aus Zahlen.\\
+
+Eine ähnliche einseitige Verteilung lässt sich bei den verwendeten Benutzernamen erkennen. In über 50\% der Fälle wurde der Benutzername \textit{root} verwendet. Werden die Benutzernamen \textit{admin}, \textit{user} und \textit{test} hinzugezählt, decken diese Benutzernamen über 75\% ab.\\
+
+Aus diesen Zahlen wird vor allem eins deutlich. Die Verwendung eines der oben genannten Passwörter in Verbindung mit einem der genannten Benutzernamen birgt ein erhebliches Sicherheitsrisiko. Werden die Zugriffszeiten der Angreifer auf den SSH-Honeypot berücksichtigt, kann bei der Verwendung dieser Benutzer-Passwort-Kombinationen von einer Kompromittierung innerhalb weniger Stunden oder gar Minuten ausgegangen werden. Es sollte so zwingend sichergestellt werden, dass ein sicheres Passwort verwendet wird. Besser ist die Authentifizierung rein auf das Public-Key-Verfahren zu beschränken.\\
+
+Es muss angenommen werden, dass Angreifer nicht nur bei SSH-Zugriffen auf einfache Kombination aus Benutzernamen und Passwörter setzen. Jedoch ist bei anderen Diensten zur Passwortauthentifizierung oftmals keine Alternative vorgesehen. In diesem Fall sollte zwingend ein sicheres Passwort gewählt werden. Um die Definition eines sicheren Passworts zu veranschaulichen, leitet das Projektteam aus der Passwortstatistik eine Passwortrichtlinie ab. Diese sieht vor, dass ein sicheres Passwort folgende Eigenschaften besitzt:
+
+\begin{itemize}
+\item Passwortlänge von mindestens 10 oder mehr Zeichen
+\item Kombination aus den Zeichenklassen Klein- und Großbuchstaben, Zahlen und Sonderzeichen
+\item Benutzung von Wörtern und persönlichen Daten wie Namen und Geburtsdatum vermeiden
+\end{itemize}
+
+Da selbst im Bewusstsein dieser Richtlinien dazu tendiert wird, nicht sichere Passwörter zu genieren, empfiehlt das Projektteam die Verwendung eines Passwortmanagers wie KeePass\footnote{ \textit{KeePass}: \url{http://keepass.info/}}. KeePass ist für alle gängigen Betriebssysteme verfügbar und ermöglicht es rein zufällige Passwörter zu generieren, zu verwalten und sicher zu speichern. Somit kann auch der Empfehlung für jeden Dienst ein separates Passwort zu verwenden einfach nachgekommen werden.
+
