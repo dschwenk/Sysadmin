@@ -10,3 +10,5 @@ Um Logfiles und ausgewertete Daten zu archivieren, werden diese automatisch komp
 Eine Benachrichtigung im Falle eines Zugriffs auf die Honeypotdienste kann mit dem Werkzeug “inotifywait” umgesetzt werden. Damit lassen sich Logfiles oder anderen Daten und Verzeichnisse auf Änderungen prüfen, um daraufhin eine Aktion wie den Versand einer Benachrichtigungsemail anzustoßen.
 
 Um das System bestmöglich abzusichern werden nicht benötigte Dienste deaktiviert. Der Zugriff auf das Hostsystem für das Projektteam erfolgt via Public-Key-Authentifizierung über SSH. Dieser SSH-Dienst ist unabhängig vom Honeypot-SSH-Dienst.
+
+Desweiteren bietet es sich an, das bestehende Honeypotsystem nach erfolgreicher Inbetriebnahme eines SSH-Honeypots um einen Web-Honeypot zu erweitern. Ein potentieller Lösungsansatz ist der Einsatz von Glastopf oder SNARE.

@@ -371,7 +371,58 @@ installiert wurde. Dem \textit{mailx}-Kommando werden dazu die SMTP- und Benutze
 \section{Web-Honeypot}
 \label{sec:Web-Honeypot}
 
-...\\
+\subsection{Installation und Konfiguration SNARE}
+\label{subsec:Installation und Konfiguration SNARE}
+
+In diesem Abschnitt wird die Installation und Konfiguration eines Web-Honeypots auf Basis von SNARE beschrieben. Die Einrichtung erfolgt für Port 80 HTTP. 
+
+\begin{lstlisting}[style=customc]
+sudo apt-get install python3 python3-pip
+\end{lstlisting}
+
+Unter anderem wird Python3 für eine erfolgreiche Inbetriebnahme vorausgesetzt. Da zusätzlich noch mehrere Python-Module geladen werden müssen, bedarf es darüber hinaus des zugehörigen  Paketverwaltungsprogramms pip\footnote{ \textit{pip}: \url{https://pip.pypa.io/en/stable/}}, auch in der entsprechenden Version 3.
+
+\begin{lstlisting}[style=customc]
+pip3 install aiohttp beautifulsoup4 cssutils gitpython
+\end{lstlisting}
+
+Über das Paketverwaltungsprogramm werden daraufhin die Python-Module  installiert.
+
+\begin{lstlisting}[style=customc]
+apt-get install git
+\end{lstlisting}
+
+Falls nicht bereits systembedingt bereitgestellt, ist es an dieser Stelle zwingend erforderlich die Versionsverwaltungssoftware git\footnote{ \textit{git}: \url{https://git-scm.com/}} zu installieren.
+
+\begin{lstlisting}[style=customc]
+cd /home/mstroh/
+git clone https://github.com/mushorg/snare.git
+\end{lstlisting}
+
+Über Github kann SNARE\footnote{ \textit{SNARE-Projekt auf Github}: \url{https://github.com/mushorg/snare}}: bezogen werden.
+
+\begin{lstlisting}[style=customc]
+cd /home/mstroh/snare
+sudo python3 clone.py --target http://example.com
+\end{lstlisting}
+
+SNARE stellt dabei selbst ein Skript bereit um bestehende Webpräsenzen zu klonen. Diese Klone werden unter
+\begin{lstlisting}[style=customc]
+/opt/snare/pages
+\end{lstlisting}
+abgelegt. Wahlweise kann natürlich auch eine eigene Webseite erzeugt und über SNARE gestartet werden.
+
+\begin{lstlisting}[style=customc]
+sudo python3 snare.py --interface 130.255.78.172 --port 80 --page-dir example.com >> snare.log &
+\end{lstlisting}
+Die sudo-Rechte benötigt SNARE um den Python-HTTPRequestHandler an Port 80 zu binden. Direkt nachdem das geschehen ist, werden diese Privilegien wieder abgegeben und der Web-Honeypot selbst läuft unter einem eigens hierfür angelegten nicht privilegierten Nutzer. In der Standardkonfiguration heißt dieser Nutzer nobody. Über die Parameter "--interface" und "--port" werden Interface und Port für den Web-Honeypot festgelegt. "--page-dir" lädt die entsprechend zuvor geklonte oder selbst erzeugte Webseite und simuliert daraufhin einen Webserver. 
+
+Sämtliche Zugriffe, auch solche, die aufgrund einer nicht vorhandenen Ressource scheitern, Nutzer-Eingaben und Zugriffsversuche werden von SNARE über die Python-Anweisung print ausgegeben. Über ">> snare.log" werden diese Ausgaben an das Logfile "snare.log" angehängt.  Ohne weiteres Zutun würden diese Ausgaben zum jeweiligen Ereigniszeitpunkt im Zwischenspeicher der Datei "snare.log" verbleiben und erst bei einer größer anfallenden Menge an Log-Einträgen tatsächlich in das Log-File geschrieben werden. Um der Anforderung einer automatischen Benachrichtigung bei einem stattfindenden Angriff gerecht zu werden, hat sich das Projektteam dazu entschlossen, die Ausgaben des Skriptes zu erweitern und den bereitgestellten Zwischenspeicher zu umgehen, um Ereignisse unmittelbar im Log-File festzuhalten und entsprechend zeitnah auf Aktivitäten reagieren zu können. Das Skript wurde an entsprechenden Stellen um folgenden Parameter erweitert:
+
+\begin{lstlisting}[style=customc]
+print(.., flush=True)
+\end{lstlisting}
+
 
 \section{Archivierung und Automatisierung}
 \label{sec:Archivierung und Automatisierung}

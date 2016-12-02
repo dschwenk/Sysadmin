@@ -29,3 +29,10 @@ Honeyd eignet sich nicht ohne Weiteres für die Aufzeichnung komplexerer Angriff
 Glastopf ist ein als Webserver getarnter Honeypot. Dieses System nutzt den Umstand, dass viele Angreifer unter Zuhilfenahme von Suchmaschinen nach Schwachstellen auf Webservern suchen, indem es sich selbst bei den gängigsten Vertretern registriert. Dabei wird Fläche für gängige, webbasierte Angriffe wie SQL-Injections, Remote-Code-Execution, File-Inclusion et cetera, geboten. Von einem Angreifer eingeschleuster Code, wird in einer Sandbox ausgeführt. Alle Verbindungen und Angriffsversuche werden geloggt und in einer Datenbank protokolliert \cite{Glastopf16}.\\
 
 Durch die Mithilfe von Webcrawlern ist es mit Glastopf möglich für die eigenen Schwachstellen Reklame zu betreiben und somit in kürzerer Zeit eine größere Menge an Angriffen auf das System zu lenken. Die optische Aufmachung der Glastopf-Startseite trägt allerdings dazu bei, dass Angriffe in sehr hohem Anteil nur automatisiert und kaum oder gar nicht in individuell gezielter Form stattfinden werden.
+
+\section{SNARE}
+\label{sec:SNARE}
+
+SNARE ist ein in Python geschriebener Webserver, der über einen HTTP-Requesthandler eine vom Administrator bereitgestellte Ordner-Struktur auf HTTP-Requests mappt. Darüber hinaus stellt dieser Honeypot Skripte bereit um bestehende Webpräsenzen zu klonen und als Web-Honeypot zu starten. So ist potentiell möglich jede beliebige bestehende Webseite, aber auch Eigenkreationen, als Web-Honeypot zu starten. Etwaige Eingaben, Nutzer-Interaktionen oder versuchte Zugriffe auf für Unbefugte nicht vorgesehene Administrationsebenen werden von SNARE geloggt \cite{Snare16}.\\
+
+Die Möglichkeit bereits bestehende Internetauftritte leicht zu klonen, bietet grundsätzlich großes Potential für Sicherheitstest eigener Webseiten. Leider ist es ohne weiteren Aufwand nicht möglich komplexere Webservices und Datenbanken zu simulieren oder anzubinden. Somit eignet sich dieser Web-Honeypot vorwiegend zur Aufzeichnung von Statistiken betreffend allgemein stattfindender Angriffe im World Wide Web, Cross-Site Scripting oder aber beliebten Angriffszielen wie etwa Logins.

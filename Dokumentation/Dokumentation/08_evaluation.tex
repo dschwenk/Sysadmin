@@ -18,7 +18,7 @@ Wie der Statistik im Anhang unter \nameref{app:Pipal Passwortstatistik} entnomme
 
 Eine ähnliche einseitige Verteilung lässt sich bei den verwendeten Benutzernamen erkennen. In über 50\% der Fälle wurde der Benutzername \textit{root} verwendet. Werden die Benutzernamen \textit{admin}, \textit{user} und \textit{test} hinzugezählt, decken diese Benutzernamen über 75\% ab.\\
 
-Aus diesen Zahlen wird vor allem eins deutlich. Die Verwendung eines der oben genannten Passwörter in Verbindung mit einem der genannten Benutzernamen birgt ein erhebliches Sicherheitsrisiko. Werden die Zugriffszeiten der Angreifer auf den SSH-Honeypot berücksichtigt, kann bei der Verwendung dieser Benutzer-Passwort-Kombinationen von einer Kompromittierung innerhalb weniger Stunden oder gar Minuten ausgegangen werden. Es sollte so zwingend sichergestellt werden, dass ein sicheres Passwort verwendet wird. Besser ist die Authentifizierung rein auf das Public-Key-Verfahren zu beschränken.\\
+Aus diesen Zahlen wird vor allem eines deutlich. Die Verwendung eines der oben genannten Passwörter in Verbindung mit einem der genannten Benutzernamen birgt ein erhebliches Sicherheitsrisiko. Werden die Zugriffszeiten der Angreifer auf den SSH-Honeypot berücksichtigt, kann bei der Verwendung dieser Benutzer-Passwort-Kombinationen von einer Kompromittierung innerhalb weniger Stunden oder gar Minuten ausgegangen werden. Es sollte so zwingend sichergestellt werden, dass ein sicheres Passwort verwendet wird. Besser ist die Authentifizierung rein auf das Public-Key-Verfahren zu beschränken.\\
 
 Es muss angenommen werden, dass Angreifer nicht nur bei SSH-Zugriffen auf einfache Kombination aus Benutzernamen und Passwörter setzen. Jedoch ist bei anderen Diensten zur Passwortauthentifizierung oftmals keine Alternative vorgesehen. In diesem Fall sollte zwingend ein sicheres Passwort gewählt werden. Um die Definition eines sicheren Passworts zu veranschaulichen, leitet das Projektteam aus der Passwortstatistik eine Passwortrichtlinie ab. Diese sieht vor, dass ein sicheres Passwort folgende Eigenschaften besitzt:
 
@@ -30,3 +30,7 @@ Es muss angenommen werden, dass Angreifer nicht nur bei SSH-Zugriffen auf einfac
 
 Da selbst im Bewusstsein dieser Richtlinien dazu tendiert wird, nicht sichere Passwörter zu genieren, empfiehlt das Projektteam die Verwendung eines Passwortmanagers wie KeePass\footnote{ \textit{KeePass}: \url{http://keepass.info/}}. KeePass ist für alle gängigen Betriebssysteme verfügbar und ermöglicht es rein zufällige Passwörter zu generieren, zu verwalten und sicher zu speichern. Somit kann auch der Empfehlung für jeden Dienst ein separates Passwort zu verwenden einfach nachgekommen werden.
 
+\section{Schlussfolgerungen Web-Honeypot}
+\label{sec:Schlussfolgerungen Web-Honeypot}
+
+Aufgrund der späteren Inbetriebnahme des Web-Honeypots lassen sich zum jetzigen Zeitpunkt noch keine genaueren Rückschlüsse ziehen. Statistiken und Schlussfolgerungen basierend auf einer Auswertung geloggter Zugriffe werden nach ausreichender Laufzeit folgen.
