@@ -417,7 +417,7 @@ sudo python3 snare.py --interface eth0 --port 80 --page-dir example.com >> snare
 \end{lstlisting}
 Die sudo-Rechte benötigt SNARE um den Python-HTTPRequestHandler an Port 80 zu binden. Direkt nachdem das geschehen ist, werden diese Privilegien wieder abgegeben und der Web-Honeypot selbst läuft unter einem eigens hierfür angelegten nicht privilegierten Nutzer. In der Standardkonfiguration heißt dieser Nutzer nobody. Über die Parameter \grqq{}--interface\grqq{} und \grqq{}--port\grqq{} werden Interface und Port für den Web-Honeypot festgelegt. \grqq{}--page-dir\grqq{} lädt die entsprechend zuvor geklonte oder selbst erzeugte Webseite und simuliert daraufhin einen Webserver. 
 
-Sämtliche Zugriffe, auch solche, die aufgrund einer nicht vorhandenen Ressource scheitern, Nutzer-Eingaben und Zugriffsversuche werden von SNARE über die Python-Anweisung print ausgegeben. Über \grqq{}>> snare.log\grqq{} werden diese Ausgaben an das Logfile \grqq{}snare.log\grqq{} angehängt.  Ohne weiteres Zutun würden diese Ausgaben zum jeweiligen Ereigniszeitpunkt im Zwischenspeicher der Datei \grqq{}snare.log\grqq{} verbleiben und erst bei einer größer anfallenden Menge an Log-Einträgen tatsächlich in das Log-File geschrieben werden. Um der Anforderung einer automatischen Benachrichtigung bei einem stattfindenden Angriff gerecht zu werden, hat sich das Projektteam dazu entschlossen, die Ausgaben des Skriptes zu erweitern und den bereitgestellten Zwischenspeicher zu umgehen, um Ereignisse unmittelbar im Log-File festzuhalten und entsprechend zeitnah auf Aktivitäten reagieren zu können. 
+Sämtliche Zugriffe, auch solche, die aufgrund einer nicht vorhandenen Ressource scheitern, Nutzer-Eingaben und Zugriffsversuche werden von SNARE über die Python-Anweisung print ausgegeben. Über \grqq{}>> snare.log\grqq{} werden diese Ausgaben an das Logfile \grqq{}snare.log\grqq{} angehängt.  Ohne weiteres Zutun würden diese Ausgaben zum jeweiligen Ereigniszeitpunkt im Zwischenspeicher der Datei \grqq{}snare.log\grqq{} verbleiben und erst bei einer größer anfallenden Menge an Log-Einträgen tatsächlich in das Log-File geschrieben werden. Um der Anforderung einer automatischen Benachrichtigung bei einem stattfindenden Angriff gerecht werden zu können, hat sich das Projektteam dazu entschlossen, die Ausgaben des Skriptes zu erweitern und den bereitgestellten Zwischenspeicher zu umgehen, um Ereignisse unmittelbar im Log-File festzuhalten und entsprechend zeitnah auf etwaige Aktivitäten reagieren zu können. 
 
 \begin{lstlisting}[style=customc]
 print(.., flush=True)
@@ -437,7 +437,7 @@ Nach erfolgreichem Start von SNARE ist der Web-Honeypot über das zuvor angegebe
 \subsection{Verwendung eines Login-Formulars}
 \label{subsec:Installation und Konfiguration SNARE}
 
-Um einem Angreifer zusätzliche Angriffsfläche zu bieten, hat sich das Projektteam nach einwöchigem Betrieb dazu entschlossen, eine Weboberfläche in Form eines Login-Formulars zu verwenden. 
+Um einem Angreifer zusätzliche Angriffsfläche zu bieten, hat sich das Projektteam nach einwöchigem Betrieb einer Kopie von example.com\footnote{ example.com \url{http://www.example.com}} dazu entschlossen, eine Weboberfläche in Form eines Login-Formulars zu einzusetzen.
 
 \begin{figure}[ht]
 	\centering
@@ -446,10 +446,36 @@ Um einem Angreifer zusätzliche Angriffsfläche zu bieten, hat sich das Projektt
 	\label{fig:snare_login}
 \end{figure}
 
+Dieses Login-Formular, wie Abbildung 6.5 ersichtlich, besteht aus lediglich zwei Eingabefeldern für jeweils Benutzername und Passwort.
+
 \subsection{SNARE-Logfile auswerten}
 \label{subsec:Installation und Konfiguration SNARE}
 
+SNARE loggt sämtliche HTTP-Anfragen in Form des angeforderten Pfades und zusätzlich eingehende HTTP-POST-Anfragen.
 
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=1.0\textwidth]{img/snare_logfile.png}
+	\caption{Auszug aus dem Log-File des Webhoneypots SNARE nach einwöchigem Betrieb}
+	\label{fig:snare_login}
+\end{figure}
+
+Wie in Abbildung \ref{fig:snare_login} ersichtlich, werden angeforderte Pfade mit dem Präfix \grqq{}Request path:\grqq{} und POST-Anfragen mit \grqq{}POST data:\grqq{} versehen. Da zusätzliche, ebenfalls in diesem Log-File gesicherte Programm-Ausgaben, wie etwa die zum Systemstart verwendeten Parameter, für das Projektteam irrelevant sind, werden für eine weitere Unterteilung lediglich die zwei zuvor genannten Kategorien verwendet.
+
+
+\begin{lstlisting}[style=customc]
+grep 'POST data:' snare.log |
+  sort > snare-post.txt
+\end{lstlisting}
+
+Unter Verwendung von grep werden alle Einträge, die durch einen HTTP-POST entstanden sind in eine Text-Datei geschrieben. Durch sort werden diese Einträge zudem sortiert.
+
+\begin{lstlisting}[style=customc]
+grep 'Request path:' snare.log |
+  sort > snare-request-paths.txt
+\end{lstlisting}
+
+Durch die gleiche Vorgehensweise werden auch alle angeforderten Pfade extrahiert. Um eine statistische Auswertung durchführen zu können, wurde an dieser Stelle auf die Verwendung von uniq verzichtet.
 
 \section{Archivierung und Automatisierung}
 \label{sec:Archivierung und Automatisierung}
