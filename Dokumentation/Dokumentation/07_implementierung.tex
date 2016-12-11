@@ -94,6 +94,25 @@ Ebenfalls wird der Parameter \textit{PermitRootLogin} auf \textit{no} gesetzt, u
 
 neu gestartet. Von nun an ist nur noch eine Anmeldung über die Benutzeraccounts der Teammitglieder in Kombination mit einer Public-Key-Authentifizierung möglich.
 
+
+\subsection{Monitoring von Logdateien}
+\label{subsec:Monitoring von Logdateien}
+
+Logdateien dienen dazu, den Status des Systems und von Diensten zu protokollieren. In diesen Logdateien lassen sich Fehler, Probleme von Diensten oder einfache Statusausgaben nebst Datum und Uhrzeit nachvollziehen. Die Logdateien liegen üblicherweise im Textformat vor und werden im Verzeichnis \textit{/var/log} abgelegt. Die Auswertung der Logdateien kann direkt über die Kommandozeile oder über einen Texteditor erfolgen. Je nach System und der Anzahl an Diensten kann der Umfang an Logdateien nicht unerheblich sein, wodurch die Auswertung eine Menge Zeit in Anspruch nehmen kann.
+
+Um das Honeypotsystem durchgängig überwachen zu können, ohne dabei manuell eine Auswertung von verschiedenen Logdateien vornehmen zu müssen, entscheidet sich das Projektteam zu einer automatisierten Auswertung. Eine Marktanalyse zeigt, dass es hierfür eine größere Anzahl an Lösungen gibt. In einer näheren Auswahl wurden \textit{logcheck}\footnote{ \textit{logcheck}: \url{http://logcheck.org/}} und \textit{Graylog}\footnote{ \textit{Graylog}: \url{https://www.graylog.org/}} betrachtet. \textit{Graylog} ist ein Open-Source-Projekt, welches das Sammeln und Analysieren von Syslog- und Eventlog-Nachrichten von verschiedenen Hosts und Diensten ermöglicht. Es lassen sich somit Logs einer ganzen Infrastruktur zentral auswerten. Die Daten werden in einer Datenbank abgelegt und können über eine Weboberfläche ausgewertet und eingesehen werden. Der Installations- und Konfigurationsaufwand für dieses Setup ist nicht zu unterschätzen. Zudem bietet dies eine weitere Angriffsfläche für das Honeypotsystem. \textit{Logcheck} dagegen wertet Logdateien mit regulären Ausdrücken auf Fehler und Sicherheitsmeldungen aus und sendet regelmäßig eine Benachrichtigung via Email. Die Ausführung erfolgt über die Kommandozeile, oder wie vorkonfiguriert stündlich über einen cronjob. Diese Funktionalität ist im Rahmen dieses Projekt ausreichend, weswegen diese Lösung gewählt wird.\\
+
+Die Installation von \textit{logcheck} erfolgt über \textit{apt-get install logcheck}. Die Konfiguration erfolgt über die Konfigurationsdatei \textit{logcheck.conf}, die unter \textit{/etc/logcheck} zu finden ist. In dieser wird festgelegt, dass die Benachrichtigungen an die beiden Projektmitglieder gehen. Über die Datei \textit{logcheck.logfiles} lassen sich die Logdateien spezifizieren, die ausgwertet werden sollen. Standardmäßig sind hier die Logdateien \textit{/var/log/syslog} \textit{/var/log/auth.log} hinterlegt, über die allgemeine Information zum System sowie zur Authentifizierung protokolliert werden.
+
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=1.0\textwidth]{img/logcheck_benachrichtigung.png}
+	\caption{Beispielhafte \textit{logcheck}-Benachrichtigung einer fehlerhaften Authentifizierung}
+	\label{fig:logcheck}
+\end{figure}
+
+
+
 \section{SSH-Honeypot}
 \label{sec:SSH-Honeypot}
 
