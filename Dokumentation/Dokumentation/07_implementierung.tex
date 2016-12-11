@@ -413,15 +413,42 @@ SNARE stellt dabei selbst ein Skript bereit um bestehende Webpräsenzen zu klone
 abgelegt. Wahlweise kann natürlich auch eine eigene Webseite erzeugt und über SNARE gestartet werden.
 
 \begin{lstlisting}[style=customc]
-sudo python3 snare.py --interface 130.255.78.172 --port 80 --page-dir example.com >> snare.log &
+sudo python3 snare.py --interface eth0 --port 80 --page-dir example.com >> snare.log &
 \end{lstlisting}
-Die sudo-Rechte benötigt SNARE um den Python-HTTPRequestHandler an Port 80 zu binden. Direkt nachdem das geschehen ist, werden diese Privilegien wieder abgegeben und der Web-Honeypot selbst läuft unter einem eigens hierfür angelegten nicht privilegierten Nutzer. In der Standardkonfiguration heißt dieser Nutzer nobody. Über die Parameter "--interface" und "--port" werden Interface und Port für den Web-Honeypot festgelegt. "--page-dir" lädt die entsprechend zuvor geklonte oder selbst erzeugte Webseite und simuliert daraufhin einen Webserver. 
+Die sudo-Rechte benötigt SNARE um den Python-HTTPRequestHandler an Port 80 zu binden. Direkt nachdem das geschehen ist, werden diese Privilegien wieder abgegeben und der Web-Honeypot selbst läuft unter einem eigens hierfür angelegten nicht privilegierten Nutzer. In der Standardkonfiguration heißt dieser Nutzer nobody. Über die Parameter \grqq{}--interface\grqq{} und \grqq{}--port\grqq{} werden Interface und Port für den Web-Honeypot festgelegt. \grqq{}--page-dir\grqq{} lädt die entsprechend zuvor geklonte oder selbst erzeugte Webseite und simuliert daraufhin einen Webserver. 
 
-Sämtliche Zugriffe, auch solche, die aufgrund einer nicht vorhandenen Ressource scheitern, Nutzer-Eingaben und Zugriffsversuche werden von SNARE über die Python-Anweisung print ausgegeben. Über ">> snare.log" werden diese Ausgaben an das Logfile "snare.log" angehängt.  Ohne weiteres Zutun würden diese Ausgaben zum jeweiligen Ereigniszeitpunkt im Zwischenspeicher der Datei "snare.log" verbleiben und erst bei einer größer anfallenden Menge an Log-Einträgen tatsächlich in das Log-File geschrieben werden. Um der Anforderung einer automatischen Benachrichtigung bei einem stattfindenden Angriff gerecht zu werden, hat sich das Projektteam dazu entschlossen, die Ausgaben des Skriptes zu erweitern und den bereitgestellten Zwischenspeicher zu umgehen, um Ereignisse unmittelbar im Log-File festzuhalten und entsprechend zeitnah auf Aktivitäten reagieren zu können. Das Skript wurde an entsprechenden Stellen um folgenden Parameter erweitert:
+Sämtliche Zugriffe, auch solche, die aufgrund einer nicht vorhandenen Ressource scheitern, Nutzer-Eingaben und Zugriffsversuche werden von SNARE über die Python-Anweisung print ausgegeben. Über \grqq{}>> snare.log\grqq{} werden diese Ausgaben an das Logfile \grqq{}snare.log\grqq{} angehängt.  Ohne weiteres Zutun würden diese Ausgaben zum jeweiligen Ereigniszeitpunkt im Zwischenspeicher der Datei \grqq{}snare.log\grqq{} verbleiben und erst bei einer größer anfallenden Menge an Log-Einträgen tatsächlich in das Log-File geschrieben werden. Um der Anforderung einer automatischen Benachrichtigung bei einem stattfindenden Angriff gerecht zu werden, hat sich das Projektteam dazu entschlossen, die Ausgaben des Skriptes zu erweitern und den bereitgestellten Zwischenspeicher zu umgehen, um Ereignisse unmittelbar im Log-File festzuhalten und entsprechend zeitnah auf Aktivitäten reagieren zu können. 
 
 \begin{lstlisting}[style=customc]
 print(.., flush=True)
 \end{lstlisting}
+
+Das Skript wurde an entsprechenden Stellen um diesen Parameter erweitert.
+
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=1.0\textwidth]{img/nmap_web.png}
+	\caption{Ergebnis eines Port-Scans mit Nmap nach zusätzlicher Inbetriebnahme des Web-Honeypots SNARE}
+	\label{fig:nmap_web}
+\end{figure}
+
+Nach erfolgreichem Start von SNARE ist der Web-Honeypot über das zuvor angegebene Interface und den entsprechenden Port, hier 80, erreichbar.
+
+\subsection{Verwendung eines Login-Formulars}
+\label{subsec:Installation und Konfiguration SNARE}
+
+Um einem Angreifer zusätzliche Angriffsfläche zu bieten, hat sich das Projektteam nach einwöchigem Betrieb dazu entschlossen, eine Weboberfläche in Form eines Login-Formulars zu verwenden. 
+
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=1.0\textwidth]{img/snare_login.png}
+	\caption{Weboberfläche des Web-Honeypots SNARE}
+	\label{fig:snare_login}
+\end{figure}
+
+\subsection{SNARE-Logfile auswerten}
+\label{subsec:Installation und Konfiguration SNARE}
+
 
 
 \section{Archivierung und Automatisierung}
