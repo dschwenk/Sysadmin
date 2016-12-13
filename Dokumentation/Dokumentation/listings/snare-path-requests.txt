@@ -1,7 +1,6 @@
   61 Request path: /
   14 Request path: /favicon.ico
    6 Request path: /webdav/
-   5 Request path: /root
    5 Request path: /robots.txt
    5 Request path: /login
    4 Request path: /phpmyadmin
