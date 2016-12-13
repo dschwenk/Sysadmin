@@ -484,19 +484,26 @@ Wie in Abbildung \ref{fig:snare_login} ersichtlich, werden angeforderte Pfade mi
 
 \begin{lstlisting}[style=customc]
 grep 'POST data:' snare.log |
-  sort > snare-post.txt
+tr -s '\n' |
+sort |
+uniq -ic |
+sort -gr > snare-post-requests.txt
 \end{lstlisting}
 
-Unter Verwendung von grep werden alle Einträge, die durch einen HTTP-POST entstanden sind in eine Text-Datei geschrieben. Durch sort werden diese Einträge zudem sortiert.
+Unter Verwendung von grep werden alle Einträge, die durch einen HTTP-POST entstanden sind, welche durch die vorangestellte Ausgabe 'POST data:' identifiziert werden, herausgefiltert. 'tr -s' entfernt daraufhin mehrere aufeinanderfolgende Zeilenumbrüche. Mittels 'sort' wird das Ergebnis entsprechend der Zeichenfolge des jeweiligen Eintrags sortiert und durch 'uniq -ic' werden mehrere gleiche Einträge zu einem einzigen Eintrag zusammengefasst, die Groß- und Kleinschreibung wird dabei ignoriert und die Anzahl der Vorkommnisse eines Eintrages durch den Parameter 'c' gezählt und jeweils als Ganzzahl vorangestellt. Dieses Ergebnis wird daraufhin noch einmal entsprechend der Häufigkeit ('sort -g') und in absteigender Reihenfolge('sort -r') sortiert.
 
 \begin{lstlisting}[style=customc]
 grep 'Request path:' snare.log |
-  sort > snare-request-paths.txt
+tr -s '\n' |
+sort |
+uniq -ic |
+sort -gr > snare-path-requests.txt
 \end{lstlisting}
 
-Durch die gleiche Vorgehensweise werden auch alle angeforderten Pfade extrahiert. Um eine statistische Auswertung durchführen zu können, wurde an dieser Stelle auf die Verwendung von uniq verzichtet.
+Durch die gleiche Vorgehensweise werden auch alle angeforderten Pfade extrahiert. Um eine statistische Auswertung durchführen zu können.
 
-TODO: Statistische Auswertung.
+Diese Befehle werden mit Hilfe eines hierfür geschriebenen Bash-Skripts ausgeführt, welches im Anhang unter \textit{\nameref{app:POST- und Path-Requests extrahieren}} eingesehen werden kann.
+
 
 \subsection{Benachrichtigung bei Zugriff auf Web-Honeypot}
 \label{subsec:Installation und Konfiguration SNARE}
