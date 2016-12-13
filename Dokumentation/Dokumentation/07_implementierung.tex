@@ -42,14 +42,14 @@ adduser mstroh sudo
 adduser dschwenk sudo
 \end{lstlisting}
 
-Zudem müssen die Benutzer in die Datei /etc/sudoers aufgenommen werden:
+Zudem müssen die Benutzer in die Datei /etc/sudoers mit folgender Zeile aufgenommen werden:
 
 \begin{lstlisting}[style=customc]
 dschwenk ALL=(ALL:ALL) ALL
 mstroh ALL=(ALL:ALL) ALL
 \end{lstlisting}
 
-Die Benutzer können somit über \textit{sudo} Aktionen, für die privligierte Berechtigungen notwendig sind, durchführen. Damit ist die Grundkonfiguration des vServers abgeschlossen. %TODO .. wirklich? fehlt  noch was?
+Dies sorgt dafür, dass \textit{sudo} in Kombination mit einem beliebigen Kommando von einem beliebigen authentifizierten Benutzer ausgeführt werden kann. Die Benutzer können somit über \textit{sudo} Aktionen, für die privligierte Berechtigungen notwendig sind, durchführen. Damit ist die Grundkonfiguration des vServers abgeschlossen. %TODO .. wirklich? fehlt  noch was?
 
 
 \subsection{Konfiguration Serverdienste}
@@ -57,28 +57,28 @@ Die Benutzer können somit über \textit{sudo} Aktionen, für die privligierte B
 
 Das System wurde von providerdienste.de mit einem aktiven SSH-Dienst ausgeliefert. Da der Login eines root-Benutzers über SSH aus Sicherheitsgründen vermieden werden sollte, wird nachfolgend eine Public-Key-Authentifizierung für die Benutzeraccounts der Teammitglieder konfiguriert.\\
 
-Damit eine Public-Key-Authentifizieurng stattfinden kann, muss im jeweiligen Benutzerverzeichnis auf dem Server ein \textit{.ssh}-Verzeichnis mit entsprechenden Berechtigungen angelegt werden.
+Damit eine Public-Key-Authentifizieurng stattfinden kann, muss im jeweiligen Benutzerverzeichnis auf dem Server ein \textit{.ssh}-Verzeichnis angelegt werden. Auf dieses Verzeichnis darf nur der Benutzer selbst zugreifen. Das genannten Verzeichnis wird durch das Kommando \textit{mkdir} angelegt und die Berechtigung über \textit{chmod} angepasst:
 
 \begin{lstlisting}[style=customc]
 mkdir ~/.ssh
 chmod 700 ~/.ssh
 \end{lstlisting}
 
-Auf dem lokalen System der Teammitglieder wird jeweils das Schlüsselpaar erzeugt:
+Auf dem lokalen System der Teammitglieder wird jeweils das RSA-Schlüsselpaar über \textit{ssh-keygen} mit einem zusätzlichen beliebigen Kommentar erzeugt:
 
 \begin{lstlisting}[style=customc]
 ssh-keygen -t rsa -C "Kommentar"
 \end{lstlisting}
 
-In das oben erzeugte \textit{.ssh}-Verzeichnis wird jeweils der öffentliche Schlüssel in die Datei \textit{authorized\_keys} abegelegt:
+In das oben erzeugte \textit{.ssh}-Verzeichnis wird jeweils der öffentliche Schlüssel in die Datei \textit{authorized\_keys} abegelegt. Dazu wird der Inhalt der Schlüsseldatei über \textit{cat} ausgegeben und via Pipe und der SSH-Verbindung an die genannte Datei angehängt:
 
 \begin{lstlisting}[style=customc]
 cat id_dsa.pub | ssh username@server 'cat >> .ssh/authorized_keys'
 \end{lstlisting}
 
-Die Berechtigungen auf die Datei \textit{authorized\_keys} wird jeweils über \textit{chmod 600 ~/.ssh/authorized\_keys} angepasst.\\
+Die Lese-/Schreib-Berechtigungen auf die Datei \textit{authorized\_keys} wird jeweils über \textit{chmod 600 ~/.ssh/authorized\_keys} auf den entsprechenden Benutzer begrenzt.\\
 
-Um die Authentifizierung via Passwort zu deaktivieren wird die die \textit{sshd\_config} unter \textit{/etc/ssh/} wie folgt angepasst:
+Um die Authentifizierung via Passwort zu deaktivieren wird die \textit{sshd\_config} unter \textit{/etc/ssh/} wie folgt angepasst:
 
 \begin{lstlisting}[style=customc]
 ChallengeResponseAuthentication no
@@ -128,17 +128,17 @@ Die Installation von \textit{logcheck} erfolgt über \textit{apt-get install log
 
 Dieses Kapitel beschreibt die Vorgehensweise zur Installation und Konfiguration von einem SSH-Honeypot auf Basis von Kippo. Dieser SSH-Honeypot soll wie für SSH üblich auf Port 22 eingerichtet werden. Da aktuell der standard SSH-Dienst auf Port 22 läuft, muss dieser zuvor angepasst werden. Dazu wird der Port in der Konfigurationsdatei \textit{etc/ssh/sshd\_config} auf Port 10022 abgeändert und der Dienst anschließend neu gestartet.\\
 
-Damit Kippo lauffähig ist, sind einige zusätzliche Pakete notwendig\footnote{ Kippo Abhängigkeiten: \url{https://github.com/desaster/kippo\#requirements}}. Diese werden, ebenso wie der git-Client für einen einfachen Download des Kippo-Projekts, installiert:
+Damit Kippo lauffähig ist, sind einige zusätzliche Pakete notwendig\footnote{ Kippo Abhängigkeiten: \url{https://github.com/desaster/kippo\#requirements}}. Diese werden, ebenso wie der git-Client für einen einfachen Download des Kippo-Projekts, über den Paketmanager installiert:
 
 \begin{lstlisting}[style=customc]
 apt-get install python-dev openssl python-openssl python-pyasn1 
   python-twisted git
 \end{lstlisting}
 
-Einer Ausführung von Befehlen oder Diensten mit root-Rechten sollte stets wohl bedacht sein und nach Möglichkeit vermieden werden. Die Ausführung des Honeypot-SSH-Dienstes mit root-Rechten oder auch unter einem unserer Benutzer wäre höchst sicherheitskritisch. Ein Angreifer könnte darüber volle Kontrolle über das Hostsystem erlangen. Um diese Gefahr möglichst gering zu halten wird ein separater Benutzer eingerichtet:
+Einer Ausführung von Befehlen oder Diensten mit root-Rechten sollte stets wohl bedacht sein und nach Möglichkeit vermieden werden. Die Ausführung des Honeypot-SSH-Dienstes mit root-Rechten oder auch unter einem unserer Benutzer wäre höchst sicherheitskritisch. Ein Angreifer könnte darüber volle Kontrolle über das Hostsystem erlangen. Um diese Gefahr möglichst gering zu halten wird ein separater Benutzer mit Homeverzeichnis, zugewiesener Shell und der sudo-Gruppenzugehörigkeit angelegt:
 
 \begin{lstlisting}[style=customc]
-useradd -d /home/kippo -s /bin/bash -m kippo -g sudo
+useradd -d /home/kippo -s /bin/bash -g sudo
 \end{lstlisting}
 
 Um auf einem Linux-System einen Port kleiner 1024 ("`well known ports"') zu verwenden sind root-Rechte erforderlich. Genau dies soll für den SSH-Honeypot-Dienst wie oben beschrieben vermieden werden. Um auch einem normalen Benutzer die Verwendung eines Ports kleiner 1024 zu ermöglichen, wird auf das Programm \textit{AuthBind}\footnote{ \textit{AuthBind}: \url{http://man.cx/authbind(1)}} zurückgegriffen. Die Installation von Authbind erfolgt via:
@@ -147,7 +147,7 @@ Um auf einem Linux-System einen Port kleiner 1024 ("`well known ports"') zu verw
 apt-get install authbind
 \end{lstlisting}
 
-Die Verwendung von Port 22 wird über die Erstellung einer Datei unter \textit{/etc/authbind/byport/} sowie die Anpassung der Berechtigungen für den Kippo-Benutzer auf diese Datei ermöglicht:
+Die Verwendung von Port 22 wird über die Erstellung einer Datei durch \textit{touch} unter \textit{/etc/authbind/byport/} sowie die Anpassung des Besitzes und der Berechtigungen für den Kippo-Benutzervia \textit{chown} und \textit{chmod} auf diese Datei ermöglicht:
 
 \begin{lstlisting}[style=customc]
 touch /etc/authbind/byport/22
@@ -181,7 +181,7 @@ Nach Ausführung des Kippo-Startskript \textit{start.sh} läuft der Prozess im H
 tail -f /home/kippo/kippo/log/
 \end{lstlisting}
 
-direkt verfolgt werden. Von nun an kann auch eine Verbindung auf Port 22 aufgebaut werden. Nicht zu vergessen ist, dass der SSH-Dienst auf Port 10022, der die Verbindung der Projektmitarbeiter ermöglicht, durch einen Portscanner wie NMap aufgespürt werden kann.
+direkt verfolgt werden. \textit{tail} gibt über den Parameter automatisch neue Zeilen im Logfile auf der Kommandozeile aus. Von nun an kann auch eine Verbindung auf Port 22 aufgebaut werden. Nicht zu vergessen ist, dass der SSH-Dienst auf Port 10022, der die Verbindung der Projektmitarbeiter ermöglicht, durch einen Portscanner wie NMap aufgespürt werden kann.
 
 \begin{figure}[ht]
 	\centering
@@ -219,7 +219,7 @@ Damit ist die Installation und grundlegende Konfiguration des SSH-Honeypots abge
 
 Die IP-Adressen von Angreifern werden im Kippo.log-Logfile neben zahlreichen Informationen wie eingegeben Benutzernamen, Passwörter und Befehle gespeichert. Ein Auszug aus einem Kippo-Logfile ist im Anhang unter \textit{\nameref{app:Ausschnitt aus Kippo-Logdatei}} zu finden. Aus diesen Informationen sollen Statistiken zu Benutzernamen und Passwörter sowie automatisiert Firewallregeln erstellt werden, um Angriffe von diesen IPs zu verhindern.
 
-Wie dem Kippo-Logfile unter \textit{\nameref{app:Ausschnitt aus Kippo-Logdatei}} zu entnehmen ist, werden Benutzernamen und Passwörter als Teile von Zeichenketten im Logfile abgelegt. Für eine Auswertung müssen diese aus dem Logfile extrahiert werden. Dies erfolgt mit Hilfe der Werkzeuge \textit{grep} und \textit{awk}. Duplikate werden durch \textit{sort} und \textit{uniq} entfernt.
+Wie dem Kippo-Logfile unter \textit{\nameref{app:Ausschnitt aus Kippo-Logdatei}} zu entnehmen ist, werden Benutzernamen und Passwörter als Teile von Zeichenketten im Logfile abgelegt. Für eine Auswertung müssen diese aus dem Logfile extrahiert werden. Dies erfolgt mit Hilfe der Werkzeuge \textit{grep}, welches nach  einer gegebenen Zeichenkette, hier "`login attempt"', in einer Datei sucht. Die Zeilen, die dem Suchmuster entsprechen werden via Pipe an \textit{awk} übergeben. \textit{awk} arbeitet intern mit Variablen, die jeweils eine Zeichenkette einer Zeile, die voneinander durch Leerzeichen getrennt sind beinhalten. Die Variable sind dabei fortlaufend nummeriert. Variable \$0 enthält die ganze Zeile, Variable \$9 die neunte durch Leerzeichen getrennte Zeichenkette, die in diesem Fall den Loginnamen und das Passwort im Format "`[login/password]"' enthält. Duplikate werden durch \textit{sort} und \textit{uniq} entfernt. Über \textit{sed} und einen regulären Ausdruck werden die beiden eckigen Klammern entfernt:
 
 
 % http://bob.k6rtm.net/kippowho.html
@@ -233,7 +233,7 @@ grep ' login attempt ' kippo.log |
 
 \end{lstlisting}
 
-Hierdurch erhalten wir eine Liste von Kombinationen aus Benutzernamen und Passwörter in der Form \textit{username/passwort}. Passwörter werden zudem separat ohne Benutzernamen extrahiert. Passwortduplikate werden hierbei nicht entfernt, um daraus aussagekräftige Statistiken generieren zu können.
+Hierdurch erhalten wir eine Liste von Kombinationen aus Benutzernamen und Passwörter in der Form \textit{username/passwort}. Passwörter werden zudem separat ohne Benutzernamen extrahiert. Dazu ist ein weiterer Aufruf von sed notwendig, der den Benutzernamen und das "`/"' entfernt. Passwortduplikate werden hierbei nicht entfernt, um daraus aussagekräftige Statistiken generieren zu können.
 
 \begin{lstlisting}[style=customc]
 grep ' login attempt ' kippo.log |
@@ -268,7 +268,7 @@ erzeugt werden. Eine dieser Statistiken ist im Anhang unter \textit{\nameref{app
 
 Ziel unseres System ist es, einen Angreifer zu beobachten und aus seinem Vorgehen zu lernen. Anschließend soll der Angreifer von der Infrastruktur fern gehalten werden, um die Sicherheit anderer Systeme zu wahren. Um einen Angreifer wirkungsvoll von einer Infrastruktur fernzuhalten, besteht die Möglichkeit den Datenverkehr des Angreifers mit einer Firewall, die dieser Infrastruktur vorgelagert ist, zu blockieren. Da in dem vorliegenden Versuchsaufbau keine weiterreichende Infrastruktur mit einer vorgelagerten Firewall vorhanden ist, wird hier exemplarisch auf dem Honeypotsystem selbst die Abwehr der Datenpakete des Angreifers mit Hilfe von \textit{iptables} vorgenommen. Die Wahl fällt auf \textit{iptables}, da hiermit Firwallregeln über sogenannte Ketten von Regeln erstellt werden können. Zudem ist \textit{iptables} standardmäßig unter Debian verfügbar und kann über ein Bash-Skript automatisiert werden. 
 
-Um Firewallregeln generieren zu können, müssen die IP-Adressen der Angreifer aus dem Kippo-Logfile extrahiert werden. Dies geschieht wie bereits unter \ref{subsec:Kippo-Logfile auswerten} beschrieben mit Hilfe der Werkzeuge \textit{grep}, \textit{sort} und \textit{uniq}. Dazu wird an \textit{grep} ein regulären Ausdruck übergeben, der IP-Adressen filtert. Damit keine identischen Firewallregeln erzeugt werden, werden doppelte IP-Adressen entfernt.
+Um Firewallregeln generieren zu können, müssen die IP-Adressen der Angreifer aus dem Kippo-Logfile extrahiert werden. Dies geschieht wie bereits unter \ref{subsec:Kippo-Logfile auswerten} beschrieben mit Hilfe der Werkzeuge \textit{grep}, \textit{sort} und \textit{uniq}. Dazu wird an \textit{grep} ein regulären Ausdruck übergeben, der IP-Adressen filtert. Damit keine identischen Firewallregeln erzeugt werden, werden doppelte IP-Adressen über \textit{sort} und \textit{uniq} entfernt.
 
 \begin{lstlisting}[style=customc]
 cat logfile.log | 
@@ -294,21 +294,21 @@ iptables-save > $BACKUPFILE
 $FW -F
 $FW -X
 
-# set standard rules
+# set standard rules - accept all connections on all chains
 $FW -P INPUT   ACCEPT
 $FW -P FORWARD ACCEPT
 $FW -P OUTPUT  ACCEPT
 
+# read IP addresses from file
 while read IP; do
-  $FW -A INPUT -s $IP -j DROP
+  # drop connections from these IPs
+  $FW -A INPUT -s $IP -j DROP 
 done < $IPFILE
 
 
 \end{lstlisting}
 
-Das Skript fertig zuerst über iptabales-save ein Backup der bestehenden Regeln an, welches wie unter \ref{sec:Archivierung und Automatisierung} beschrieben archiviert wird. Eine beispielhafte Ausgabe von iptables-save ist im Anhang unter \textit{\nameref{app:Ausgabe iptables-save}} zu finden. Anschließend werden alle existierenden Regeln gelöscht. Dies geschieht explizit, um keine doppelten Regelsätze zu erstellen. Dies würde die Performance von iptables unnötig mindern. Ebenfalls explizit werden über die Regeln standardmäßig alle Verbindungen akzeptiert. Damit lassen sich aus den Verbindungs-Logfiles beispielsweise Portscans nachweisen.
-
-Dieses Skript wird über einen cronjob einmal täglich ausgeführt.
+Das Skript fertig zuerst über \textit{iptabales-save} ein Backup der bestehenden Regeln an, welches wie unter \ref{sec:Archivierung und Automatisierung} beschrieben archiviert wird. Eine beispielhafte Ausgabe von \textit{iptables-save} ist im Anhang unter \textit{\nameref{app:Ausgabe iptables-save}} zu finden. Anschließend werden alle existierenden Regeln über die Parameter -F und -X gelöscht. Dies geschieht explizit, um keine doppelten Regelsätze zu erstellen. Dies würde die Performance von iptables unnötig mindern. Ebenfalls explizit werden über die Regeln standardmäßig alle Verbindungen für die INPUT-, FORWARD- und OUTPUT-Chain akzeptiert. Damit lassen sich aus den Verbindungs-Logfiles beispielsweise Portscans nachweisen. Die Regeln selbst werden über eine Schleife erstellt, die Zeilenweise die IP-Adressen aus der oben generierten Datei ausließt und alle Verbindungen dieser IP auf der INPUT-Chain verwirft. Dieses Skript wird über einen cronjob einmal täglich ausgeführt.
 
 
 
@@ -531,7 +531,7 @@ Die Installation erfolgt via:
 sudo install gdrive /usr/local/bin/gdrive
 \end{lstlisting}
 
-Nach der erfolgreichen Installation des Clients müssen diesem Berechtigungen zum Zugriff auf einen Google Drive Account eingerichtet werden. Dazu wird der Client mit einem beliebigen Parameter aufgerufen:
+Nach der erfolgreichen Installation des Clients müssen diesem Berechtigungen zum Zugriff auf einen Google Drive Account eingerichtet werden. Dazu wird der Client mit einem beliebigen Parameter, hier \textit{list} zum Auflisten der gdrive-Inhalte, aufgerufen:
 
 \begin{lstlisting}[style=customc]
 gdrive list
