@@ -7,7 +7,7 @@
 \subsection{Grundkonfiguration}
 \label{subsec:Grundkonfiguration}
 
-Als Hostsystem kommt ein Debian Jessy (Version 8.6) 64-Bit zum Einsatz. Dieses System ist ein virtuelles System, welches auch als vServer bezeichnet wird. Bereitgestellt wird dieser vServer von providerdienste.de\footnote{\url{https://www.providerdienste.de/}} mit folgenden Eigenschaften:
+Als Hostsystem kommt ein Debian Jessy (Version 8.6) 64-Bit zum Einsatz. Dieses System ist ein virtuelles System, welches auch als vServer bezeichnet wird. Bereitgestellt wird dieser vServer von providerdienste.de mit folgenden Eigenschaften:
 
 \begin{itemize}
 \item 2 CPU-Kerne a 2,67 GHz
@@ -17,8 +17,7 @@ Als Hostsystem kommt ein Debian Jessy (Version 8.6) 64-Bit zum Einsatz. Dieses S
 %\item 10 Ipv6-Adressen
 \end{itemize}
 
-Das System wurde mit diesen Eigenschaften gewählt, um sicherzustellen, dass für diesen Versuchsaufbau ausreichend Rechenleistung und Speicher zu Verfügung steht. Zudem ist die öffentliche IPv4-Adresse zu nennen, die den Teammitgliedern in einem Versuchsaufbau in einem privaten Heimnetzwerk aus technischen Gründen nicht zur Verfügung gestanden hat. Die Verwaltung des Servers erfolgt zunächst über SSH über einen Root-Zugang, der von providerdienste.de bereitgestellt wird.
-Alternative ist eine Verwaltung über eine sogenannte Remote-Konsole möglich. Über diese Konsole  kann das System jederzeit gestartet und gestoppt werden oder auch das root-Passwort neu gesetzt werden, selbst dann wenn kein Zugriff via SSH zu Verfügung steht. Zudem kann eine Neuinstallation ausgeführt werden.\\
+Das System wurde mit diesen Eigenschaften gewählt, um sicherzustellen, dass für diesen Versuchsaufbau ausreichend Rechenleistung und Speicher zu Verfügung steht. 
 
 Da das System als installiertes System mit funktionsfähiger Netzwehrkonfiguration übergeben wurde, ist der erste Schritt eine Aktualisierung der installierten Pakete. Dazu werden die Paketlisten neu eingelesen und neue Paketversionen installiert:
 
