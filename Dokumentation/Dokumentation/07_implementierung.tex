@@ -490,7 +490,7 @@ uniq -ic |
 sort -gr > snare-post-requests.txt
 \end{lstlisting}
 
-Unter Verwendung von grep werden alle Einträge, die durch einen HTTP-POST entstanden sind, welche durch die vorangestellte Ausgabe 'POST data:' identifiziert werden, herausgefiltert. 'tr -s' entfernt daraufhin mehrere aufeinanderfolgende Zeilenumbrüche. Mittels 'sort' wird das Ergebnis entsprechend der Zeichenfolge des jeweiligen Eintrags sortiert und durch 'uniq -ic' werden mehrere gleiche Einträge zu einem einzigen Eintrag zusammengefasst, die Groß- und Kleinschreibung wird dabei ignoriert und die Anzahl der Vorkommnisse eines Eintrages durch den Parameter 'c' gezählt und jeweils als Ganzzahl vorangestellt. Dieses Ergebnis wird daraufhin noch einmal entsprechend der Häufigkeit ('sort -g') und in absteigender Reihenfolge('sort -r') sortiert.
+Unter Verwendung von grep werden alle Einträge, die durch einen HTTP-POST entstanden sind, welche durch die vorangestellte Ausgabe 'POST data:' identifiziert werden, herausgefiltert. 'tr -s' entfernt daraufhin mehrere aufeinanderfolgende Zeilenumbrüche. Mittels 'sort' wird das Ergebnis entsprechend der Zeichenfolge des jeweiligen Eintrags sortiert und durch 'uniq -ic' werden mehrere gleiche Einträge zu einem einzigen Eintrag zusammengefasst, die Groß- und Kleinschreibung wird dabei ignoriert und die Anzahl der Vorkommnisse eines Eintrages durch den Parameter 'c' gezählt und jeweils als Ganzzahl vorangestellt. Dieses Ergebnis wird daraufhin noch einmal entsprechend der Häufigkeit('sort -g') und in absteigender Reihenfolge('sort -r') sortiert.
 
 \begin{lstlisting}[style=customc]
 grep 'Request path:' snare.log |
