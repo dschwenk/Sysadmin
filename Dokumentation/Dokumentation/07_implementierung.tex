@@ -418,7 +418,7 @@ cd /home/mstroh/
 git clone https://github.com/mushorg/snare.git
 \end{lstlisting}
 
-Über Github kann SNARE\footnote{ \textit{SNARE-Projekt auf Github}: \url{https://github.com/mushorg/snare}}: bezogen werden.
+Über Github kann SNARE\footnote{ \textit{SNARE-Projekt auf Github}: \url{https://github.com/mushorg/snare}} bezogen werden.
 
 \begin{lstlisting}[style=customc]
 cd /home/mstroh/snare
@@ -465,7 +465,7 @@ Um einem Angreifer zusätzliche Angriffsfläche zu bieten, hat sich das Projektt
 	\label{fig:snare_login}
 \end{figure}
 
-Dieses Login-Formular, wie Abbildung 6.5 ersichtlich, besteht aus lediglich zwei Eingabefeldern für jeweils Benutzername und Passwort.
+Dieses Login-Formular, wie Abbildung \ref{fig:snare_login} ersichtlich, besteht aus lediglich zwei Eingabefeldern für jeweils Benutzername und Passwort.
 
 \subsection{SNARE-Logfile auswerten}
 \label{subsec:Installation und Konfiguration SNARE}
@@ -476,10 +476,10 @@ SNARE loggt sämtliche HTTP-Anfragen in Form des angeforderten Pfades und zusät
 	\centering
 		\includegraphics[width=1.0\textwidth]{img/snare_logfile.png}
 	\caption{Auszug aus dem Log-File des Webhoneypots SNARE nach einwöchigem Betrieb}
-	\label{fig:snare_login}
+	\label{fig:snare_logfile}
 \end{figure}
 
-Wie in Abbildung \ref{fig:snare_login} ersichtlich, werden angeforderte Pfade mit dem Präfix \grqq{}Request path:\grqq{} und POST-Anfragen mit \grqq{}POST data:\grqq{} versehen. Da zusätzliche, ebenfalls in diesem Log-File gesicherte Programm-Ausgaben, wie etwa die zum Systemstart verwendeten Parameter, für das Projektteam irrelevant sind, werden für eine weitere Unterteilung lediglich die zwei zuvor genannten Kategorien verwendet.
+Wie in Abbildung \ref{fig:snare_logfile} ersichtlich, werden angeforderte Pfade mit dem Präfix \grqq{}Request path:\grqq{} und POST-Anfragen mit \grqq{}POST data:\grqq{} versehen. Da zusätzliche, ebenfalls in diesem Log-File gesicherte Programm-Ausgaben, wie etwa die zum Systemstart verwendeten Parameter, für das Projektteam irrelevant sind, werden für eine weitere Unterteilung lediglich die zwei zuvor genannten Kategorien verwendet.
 
 
 \begin{lstlisting}[style=customc]
