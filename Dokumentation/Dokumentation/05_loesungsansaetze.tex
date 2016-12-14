@@ -2,26 +2,30 @@
 \label{ch:Lösungsansätze}
 
 % Kapitel beschreibung + einleitung
-In diesem Kapitel sollen aus den dokumentierten Anforderungen sowie aus den Kenntnissen, die aus der Marktanalyse gewonnen wurde, mögliche Lösungsansätze erarbeitet werden. Diese Lösungsansätze betrachten nachfolgend mögliche Hostsysteme sowie dessen Infrastruktur, eine Ansätze zur x.y\\
+In diesem Kapitel sollen aus den dokumentierten Anforderungen sowie aus den Kenntnissen, die aus der Marktanalyse gewonnen wurde, mögliche Lösungsansätze erarbeitet werden. Diese Lösungsansätze betrachten nachfolgend mögliche Hostsysteme sowie dessen Infrastruktur, Ansätze zur Bereitstellung der Honeypotdienste sowie die Auswertung der Daten dieser Dienste.\\
+
+\section{Honeypotsystem}
+\label{sec:Honeypotsystem}
 
 % mögliche lösungen bzgl. System und infrastruktur
-In den Anforderungen wurde definiert, dass das Honeypotsystem einen, oder besser mehrere Dienste anbieten soll. Grundlegend wird somit mindestens ein Linux oder BSD-System benötigt. Alternativ wäre denkbar, für verschiedene Honeypotdienste verschiedene Systeme zu verwenden. Um ein realistisches Angriffsziel abzugeben und die Dienste im Internet bereit zu stellen wird je System eine öffentlicher IP-Adresse benötigt. Da es sich bei diesem Projekt um eine Hochschularbeit handelt, wäre denkbar beim Rechenzentrum anzufragen, ob dieses ein oder mehrere Systeme bereitstellen kann. Fragen und Probleme könnte somit auch vor Ort persönlich geklärt werden. Ebenfalls ist anzunehmen, das für diese Lösung keine Kosten entstehen.
+In den Anforderungen wurde definiert, dass das Honeypotsystem einen, oder besser mehrere Dienste anbieten soll. Grundlegend wird somit mindestens ein Linux oder BSD-System benötigt. Alternativ wäre denkbar, für verschiedene Honeypotdienste verschiedene Systeme zu verwenden. Um ein realistisches Angriffsziel abzugeben und die Dienste im Internet erreichbar zu machen wird je System eine öffentlicher IP-Adresse benötigt. Da es sich bei diesem Projekt um eine Hochschularbeit handelt, wäre denkbar beim Rechenzentrum anzufragen, ob dieses ein oder mehrere Systeme bereitstellen kann. Fragen und Probleme könnte somit auch vor Ort persönlich geklärt werden. Ebenfalls ist anzunehmen, das für diese Lösung keine Kosten entstehen.
 
 
 Alternativ kann bei einem öffentlichen Provider Infrastruktur angemietet werden. Das Projektteam hat in der Vergangenheit bereits Erfahrungen mit vServer des Providers providerdienste.de\footnote{\url{https://www.providerdienste.de/}} gemacht, wodurch dieser Anbieter eine Alternative zum Rechenzentrum darstellt. Die Verwaltung eines Servers bei diesem Provider erfolgt über SSH. Alternative ist eine Verwaltung über eine sogenannte Remote-Konsole möglich. Über diese Konsole  kann das System jederzeit gestartet und gestoppt werden oder auch das root-Passwort neu gesetzt werden, selbst dann wenn kein Zugriff via SSH zu Verfügung steht. Zudem kann eine Neuinstallation ausgeführt werden. Die Auswahl an auswählbaren Betriebsystemen umfasst einige Linux-Distributionen, darunter ein aktuelles Debian 8. Die Kosten für einen vServer mit einer Ausstattung im Einstiegsbereich des Anbieters liegen unter 10 Euro je Monat. Die Vertragsbindung sieht keine Mindestlauflaufzeit vor, wodurch eine monatliche Kündigung möglich ist.
 
 Eine weitere Möglichkeit wäre das System bei einem der Projektmitglieder privat aufzusetzen. Dies bringt den Vorteil der Freiheit bezüglich der freien Auswahl der Infrastruktur sowie des System selbst, erfordert jedoch zusätzlichen technischen Aufwand in Form der Bereitstellung und Konfiguration der Infrastruktur.\\
 
+
+\section{Honeypotdienste}
+\label{sec:Honeypotdienste}
+
 % mögliche lösungen bzgl. honeypotdienste + eigenentwicklung
-... mögliche lösungen bzgl. honeypotdienste + eigenentwicklung: ...
-Aufgrund der begrenzten Ressourcen ist die Eigenentwicklung von Honeypotdiensten  nicht realisierbar. Ein Lösungsansatz für die Bereitstellung von einem SSH-Honeypot ist der Einsatz von Kippo. Damit wird ein SSH-Dienst, der nach erfolgreichem Login ein virtuelles System simuliert, bereitgestellt. Die von Kippo erzeugten Logfiles gilt es automatisiert auszuwerten. Dies wird mit Hilfe von einem Bash-Skript bewerkstelligt, dass IP-Adressen, Benutzernamen und Passwörter extrahiert. Aus den extrahierten IP-Adressen werden zyklisch Firewallregeln für iptables erzeugt, um zukünftige Angriffe von dieser IP zu blockieren.
 
-Zur Bereitstellung von Diensten wie FTP oder HTTP wird ein separates Honeypot-Werkzeug eingesetzt, dass über eine Evaluation einer Anzahl an in Frage kommenden Systeme ausgewählt wird.
-Um Logfiles und ausgewertete Daten zu archivieren, werden diese automatisch komprimiert und auf einem Cloud-Speicher wie GoogleDrive abgelegt. Eine Auswertung, aber auch Aufbereitung von Systemweiten Logfiles erfolgt mit Werkzeugen wie Logwatch oder Graylog.
-Eine Benachrichtigung im Falle eines Zugriffs auf die Honeypotdienste kann mit dem Werkzeug “inotifywait” umgesetzt werden. Damit lassen sich Logfiles oder anderen Daten und Verzeichnisse auf Änderungen prüfen, um daraufhin eine Aktion wie den Versand einer Benachrichtigungsemail anzustoßen.
+In den Anfordurgen wurde definiert, dass das Honeypotsystem einen oder besser mehrere Dienste simuliert.  Es ist somit denkbar, Honeypotdienste einzusetzen, die einen Telnet oder SSH-Dienst, einen (S)FTP-Dienst, einen HTTP(S) oder SMTP-Dienst simulieren. Auch weitere Dienste sind denkbar. In Kapitel \ref{ch:Marktanalyse} wurden bereits bestehende Lösungen analysiert, die einen Teil der oben genannten Dienste nachbilden können.
+Eine Lösung, die genau den definierten Anforderungen entspricht, kann zudem über eine Eigenentwicklung erarbeitet werden. Hierbei wäre denkbar, einen Webhoneypot auf Basis eines bestehenden Webservers wie Apache, Nginx oder lighttpd umzusetzen. Dazu kann eine Website implementiert werden, die neben Standardelementen wie Text und Buttons auch ein Login-Formular bietet, über das ein potentieller Angreifer mögliche Kombinationen aus Benutzernamen und Passwörter eingeben kann, die im Hintergrund dokumentiert werden. Bei der Auswertung dieser Felder ist allgemein zu beachten, dass diese Ziel einer SQL Injection werden können, um den Loginvorgang zu manipulieren. Ebenfalls wäre eine Art Gästebuch denkbar, dass neben Felder für Namen, Emailadresse auch ein Textfeld enthält, welches in der Vergangenheit Ursprung von Cross-Site-Scripting-Angriffen war. Zu berücksichtigen ist, dass für eine Auswertung der Angriffe jegliche Benutzereingaben dokumentiert werden müssen.
 
-% mögliche lösungen für xy
 
-Um das System bestmöglich abzusichern werden nicht benötigte Dienste deaktiviert. Der Zugriff auf das Hostsystem für das Projektteam erfolgt via Public-Key-Authentifizierung über SSH. Dieser SSH-Dienst ist unabhängig vom Honeypot-SSH-Dienst.
 
-Desweiteren bietet es sich an, das bestehende Honeypotsystem nach erfolgreicher Inbetriebnahme eines SSH-Honeypots um einen Web-Honeypot zu erweitern. Ein potentieller Lösungsansatz ist der Einsatz von Glastopf oder SNARE.
+
+
+

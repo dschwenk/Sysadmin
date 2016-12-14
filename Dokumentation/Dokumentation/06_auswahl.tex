@@ -2,18 +2,35 @@
 \label{ch:Bewertung und Auswahl der Lösung}
 
 % einleitung
-Dieses Kapitel .. \\
+In diesem Kapitel erfolgt die Bewertung der unter \ref{ch:Lösungsansätze} aufgezeigten Lösungsansätze. Die hier getroffene Auswahl an Lösungen dient im weiteren Verlauf als Grundlage der Implementierung.\\
 
+\section{Honeypotsystem}
+\label{sec:Honeypotsystem}
 
 % bewertung der lösungen zum system + infrastruktur
-Für das Honeypotsystem wird mindestens ein oder gar mehrere Hostsysteme benötigt. Im Kapiter \ref{ch:Lösungsansätze} wurden dazu die möglichen Lösungen zum Hosting auf den Hochschulservern, bei einem öffentlichen Provider oder im privaten Umfeld aufgezeigt. Das Projektteam entscheidet sich hierbei für ein Hosting bei providerdienste.de. Diese Entscheidung wurde aufgrund folgender Kriterien getroffen:
+Für das Honeypotsystem wird mindestens ein oder gar mehrere Hostsysteme benötigt. In Kapitel \ref{ch:Lösungsansätze} wurden dazu die möglichen Lösungen zum Hosting auf den Hochschulservern, bei einem öffentlichen Provider oder im privaten Umfeld aufgezeigt. Das Projektteam entscheidet sich hierbei für ein Hosting bei providerdienste.de. Diese Entscheidung wurde aufgrund folgender Kriterien getroffen:
 
 \begin{itemize}
-\item Bereitstellung eines vServers bei providerdienste.de innerhalb 24 Stunden - die Bereitstellung auf Hochschulservern wurde auf Anfrage auf unbestimmte Zeit datiert, wodurch eine Planung weiterer Projektschritte erschwert wird. Eine qualitativ gleichwertige Umsetzung im privaten Umfeld, die dem Angebot des Providers entspricht, kann nicht nicht innerhalb 24 Stunden umgesetzt werden
+\item Bereitstellung eines vServers bei providerdienste.de innerhalb 24 Stunden - die Bereitstellung auf Hochschulservern wurde auf Anfrage auf unbestimmte Zeit datiert, wodurch eine Planung weiterer Projektschritte erschwert wird. Eine qualitativ gleichwertige Umsetzung im privaten Umfeld, die dem Angebot des Providers entspricht, kann nicht nicht innerhalb 24 Stunden umgesetzt werden.
 \item je vServer eine öffentliche IPv4-Adresse - im privaten Umfeld der Projektmitglieder ist keine Nutzung einer öffentlichen IPv4-Adresse möglich. Dies begründet sich auf den Anbieter Unitymedia und deren DS Light-Anschlusstechnik, die mehrere Anschlüsse über ein NAT-Verfahren über eine öffentliche IP-Adresse bereitstellt. An den Modems der Projektmitglieder ist somit nur eine private IP-Adresse vorhanden.
-\item Remote-Konsole - diese Konsole ermöglicht die Verwaltung des vServer selbst dann, wenn kein Zugriff via SSH möglich ist. Eine Lösung in diesem Umfang ist beim Angebot des Rechenzentrums in Form eines SSH-Zugangs nicht gegeben. Im privaten Umfeld wäre für solch eine Lösung weiterer Implementierungsaufwand notwendig
+\item Remote-Konsole - diese Konsole ermöglicht die Verwaltung des vServer selbst dann, wenn kein Zugriff via SSH möglich ist. Eine Lösung in diesem Umfang ist beim Angebot des Rechenzentrums in Form der Beschränkung auf einen SSH-Zugangs nicht gegeben. Im privaten Umfeld wäre für solch eine Lösung weiterer Implementierungsaufwand notwendig.
 \end{itemize}
 
-Für die Implementierung setzt das Projekteam somit auf einen gemieteten vServer. Aufgrund der ausreichenden Performance des Einstiegsmodelle der vServer bei providerdienste.de sowie den zusätzlichen Kosten, die durch weitere gemietete Systeme entstehen würden, entscheidet sich das Team zur Umsetzung auf einem einzigen System.\\
+Für die Implementierung setzt das Projekteam somit auf einen gemieteten vServer. Aufgrund der ausreichenden Performance des Einstiegsmodelle der vServer bei providerdienste.de sowie den zusätzlichen Kosten, die durch weitere gemietete Systeme entstehen würden, entscheidet sich das Team zur Umsetzung auf einem einzigen System. Dabei fällt die Wahl auf ein Debian, da die Projektmitglieder eine Erfahrung in der Verwaltung dieses Systems mitbringt.\\
 
-bewertung / auswahl honeypot dienste
+\section{Honeypotdienste}
+\label{sec:Honeypotdienste}
+
+Bereits in Kapitel \ref{ch:Marktanalyse} fand eine Marktanalyse möglicher Honeypotdienste statt. Dabei wurden fünf bestehende Lösungen näher betrachtet. Im Kapitel \ref{sec:Honeypotdienste} wurde mit der Möglichkeit der Eigenentwicklung eine weitere Lösung aufgezeigt.
+
+Auf Grund dessen, dass Linux-Server speziell über SSH verwaltet werden und die große Mehrheit der aktiven Website auf Linux-Webserver basieren \cite{w3techs16}, entscheidet sich das Projektteam für den Einsatz eines SSH- und Webserver-Honeypots.
+
+Die Lösung der Eigenentwicklung eines Honeypotdienstes ermöglicht dem Projektteam, einen Dienst genau den Anforderungen entsprechend umzusetzen. Bei dieser Eigenentwicklung muss jedoch berücksichtigt werden, dass hierfür ein Großteil der zeitlichen Projektressourcen eingeplant werden müssen. Es muss eine komplette Architektur entworfen und umgesetzt werden. Dabei müssen sowohl in der Planungs- als auch in der Implementierungsphase jegliche Security-Aspekte, die zuvor erhoben werden müssen, berücksichtigt werden. Dies kann das Projektteam nicht gewährleisten, womit diese Lösung nicht weiter betrachtet wird.
+
+
+Die Linux-Distribution HoneyDrive bringt bereits eine größere Zahl an Honeypotdiensten mit, darunter auch einen SSH- und Webhoneypot. Jedoch ist das große Manko bei HoneyDrive der veraltete Software-Stand. Die letzte Aktualisierung fand im Jahre 2014 statt. Dies, sowie der Overhead an vorinstallierten und vorkonfigurierten Diensten, birgt die Gefahr, dass ein potenzieller Angreifer über eine Lücke das Hostsystem kompromittieren oder übernehmen kann.
+
+Honeyd dient mehr der Bereitstellung virtueller Hosts in einem Netzwerk und entspricht somit nicht der Anforderung der Bereitstellung eines SSH- oder Webdienst. Als SSH-Honeypot fällt somit die Wahl auf Kippo.
+
+Der Webhoneypot SNARE bietet die Möglichkeit bereits bestehende Internetauftritte zu klonen, wodurch sich viele Website einfach nachahmen lassen. Hierbei muss jedoch berücksichtigt werden, dass speziell komplexere Webservices den Einsatz bestimmtet Infrastruktur wie Datenbanken voraussetzen, wodurch die Klonmöglichkeiten eingeschränkt sind. Dennoch ist diese Funktionalität der Glastopf-Website, die standardmäßig einen sehr geringen Umfang bietet, überlegen. Bei einem Einsatz von Glastopf müsste somit vor der produktiven Nutzung eine entsprechende Website implementiert werden. Die Wahl des Webhoneypots fällt somit auf SNARE.
+
