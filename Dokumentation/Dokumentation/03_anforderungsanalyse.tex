@@ -13,10 +13,9 @@ Die Anforderungen an das Honeypot-System werden in Muss-, Kann- und Soll-Kriteri
 \item Angreifer darf keinerlei Möglichkeit zur Interaktion mit dem Host-Betriebssystem haben
 \item Angreifer darf keine bzw. nur gefälschte Antworten auf Anfragen erhalten
 \item Honeypot muss mindestens einen, besser jedoch mehrere Dienste, wie beispielsweise HTTP, SSH oder FTP, simulieren/anbieten
-\item Honeypot muss ein realistisch wirkendes Angriffsziel darstellen
 \item Angriffe werden geloggt
 \item Ein- und ausgehender Netzwerkverkehr muss (überwacht und) geloggt werden
-\item Protokollierte Daten dürfen durch Angreifer nicht verändert werden können
+\item Die Gefahr der Manipulation von protokollierten Daten durch einen Angreifer muss minimal gehalten werden
 
 \end{itemize}
 
@@ -26,7 +25,7 @@ Die Anforderungen an das Honeypot-System werden in Muss-, Kann- und Soll-Kriteri
 \label{sec:Soll-Kriterien}
 \begin{itemize}
 \item Automatische Benachrichtigung, wenn System angegriffen wird
-\item Protokollierung und ggf. Forwarding von Log-Files dürfen für den Angreifer nicht sichtbar sein
+\item Protokollierung und ggf. Forwarding von Log-Files sollen für den Angreifer nicht sichtbar sein
 \item Automatisierte Auswertung von Logdaten
 \item Logdateien / ausgewertete Daten werden automatisch separat gespeichert (extra System, Cloud-Speicher)
 \end{itemize}
