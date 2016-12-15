@@ -35,21 +35,41 @@ Da selbst im Bewusstsein dieser Richtlinien dazu tendiert wird, nicht sichere Pa
 \section{Schlussfolgerungen Web-Honeypot}
 \label{sec:Schlussfolgerungen Web-Honeypot}
 
+Innerhalb eines Zeitraumes von einer Woche erfolgten auf dem Web-Honeypot 149 Zugriffe über HTTP und 5 POST-Requests. Angeforderte Pfade und POST-Requests können im Anhang unter \nameref{app:Auswertung snare-path-requests} und \nameref{app:Auswertung snare-post-requests} eingesehen werden. Während dieses Zeitraums bestand der Webauftritt des Web-Honeypots aus einer Kopie der Seite example.com. Ungeachtet der Tatsache, dass damit einem Angreifer lediglich die Möglichkeit gegeben war über verschiedene Pfade einen Zugriff zu potentiell über die Startseite nicht erreichbaren Login Seiten zu erhalten oder über Anwendung von HTTP-Methoden wie POST Schadcode einschleusen zu können und somit die angebotene Angriffsfläche sehr gering ausfiel, konnte das Projektteam mehrere verschiedene Angriffsszenarien aufzeichnen.\\
 
-Aufgrund der späteren Inbetriebnahme des Web-Honeypots lassen sich zum jetzigen Zeitpunkt noch keine genaueren Rückschlüsse ziehen. Statistiken und Schlussfolgerungen basierend auf einer Auswertung geloggter Zugriffe werden nach ausreichender Laufzeit folgen.
+Die im folgenden Abschnitt getroffenen Aussagen basieren auf Vermutungen, die durch den aktuellen Kenntnisstand des Projektteams begründet und entsprechend zu bewerten sind.\\
+
+61 Aufrufe des Root-Pfades der Webseite lassen darauf schließen, dass der Honeypot tatsächlich von circa 61 unterschiedlichen Systemen aufgerufen wurde. Auch die 14 Anfragen mit dem Ziel die Ressource 'favicon.ico' zu laden, lassen einen Rückschluss zu.  Bei dieser Ressource handelt es sich um ein Miniatur-Bild, ein Logo einer Webseite, das innerhalb eines Browser-Tabs der URI vorangestellt wird und im Wesentlichen der Repräsentation und Wiedererkennung dient. Das Anfordern dieser Ressource ist eine Eigenheit von verbreiteten Browsern, so lässt sich daraus schließen, dass es tatsächlich annähernd 14 manuell durchgeführte Aufrufe des Webhoneypots unter Verwendung eines Browsers gab. Da das Projektteam zu diesem Zeitpunkt bereits im Rahmen der Veröffentlichung dieser Dokumentation die IP-Adresse des Honeypots öffentlich gemacht hat, ist die Möglichkeit nicht auszuschließen, dass diese Zugriffe dieser Veröffentlichung zuzuschreiben sind und sonst möglicherweise nicht stattgefunden hätten.\\ 
+
+Die wenig ansprechende Optik, der Mangel an Inhalten und Angriffsflächen in Form von Eingabefeldern der während dieses Zeitraums aktiven Weboberfläche des Honeypots, lassen darauf schließen, dass der Großteil der aufgezeichneten Zugriffe und Zugriffsversuche automatisiert stattgefunden hat. Dafür sprechen auch 5 Zugriffe auf die Datei 'robots.txt', die insbesondere von gutartigen aber auch bösartigen Bots, so genannten Webcrawlern, die das Internet automatisiert nach Inhalten durchsuchen, ausgewertet wird. So ist es eine gängige Praxis diese Datei nach Einträgen mit vorangestelltem 'disallow' zu durchsuchen, welche Pfade zu Ressourcen angibt, welche von einem solchen Webcrawler auf Wunsch des Administrators nicht betrachtet werden sollen. Gerade diese Vorgabe macht es für Angreifer interessant genau diese, vom Administrator nicht zur Durchsicht erwünschten, Ressourcen aufzurufen und zu analysieren. 5 Zugriffsversuche auf die Webanwendung phpMyAdmin\footnote{ \textit{phpMyAdmin}: \url{https://www.phpmyadmin.net/}} lassen darauf schließen, 
+
 
 Login-Formular nicht mehr relevant, nach Updates SNARE instabil.
 
-Alles auf Basis jetztigen Kenntisstandes und darauf basierenden Vermutungen
 
-14 mal favicon.ico in 2 Wochen. Davon auszugehen das echter Nutzer mit Browser aufgerufen hat.
+5 phpmyadmin (MySQL verwaltung)Aufrufe -> Hätte sich gelohnt etwas entsprechendes zu simulieren
+-> Botnetz
+-> Bot sucht Schwachstellen in phpmyadmin -> https://ensourced.wordpress.com/2011/02/25/zmeu-attacks-some-basic-forensic/
+http://stateofsecurity.com/?p=467
+-> viele geskriptete Attacken auf phpmyadmin -> hohe Sicherheitsmaßnahmen nötig bei Vernwendung von phpmyadmin
+-> http://sharadchhetri.com/2013/06/27/protect-from-w00tw00t-at-blackhats-romanian-anti-sec/
 
-5 mal robots.txt möglicherweise check von Crawlern oder nach disallow suchen könnte interessant sein
+Insgesamt über 30 Versuche auf Login-Flächen zu gelangen oder Passwörter abzurufen -> Wichtigkeit sicherer Passwörter
 
-4 phpmyadmin (MySQL verwaltung)Aufrufe -> Hätte sich gelohnt etwas entsprechendes zu simulieren
+HNAP  014, the HNAP was succesfully exploited by The Moon worm
 
+http://stateofsecurity.com/?p=467 
+   1 Request path: /nmaplowercheck1480791133
+   1 Request path: /nice%20ports%2C/Tri%6Eity.txt%2ebak
+   portscan mit nmap
+
+w00tw00t -> This is just an automatic script deployed by many Script Kiddies looking for a security breach in your apache version/configuration. The signature w00tw00t is usually left by DFind.
+
+./stssys.htm -> https://neonprimetime.blogspot.de/2016/08/stssyshtm-wget-request.html
 
 Schlussfolgerung aufgrund von Aufmachung(zunächst example-Klon, danach schäbiges Login-Formular) -> Großteil der Angriffe automatisiert
+
+-> Man hätte noch IP-Adressen auswerten können indem man python-file von SNARE editiert hätte -> Zeitgründe
 
 
 Sample one:
