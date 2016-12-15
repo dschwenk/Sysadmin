@@ -552,6 +552,7 @@ In den vorherigen Kapitel wurde die Vorgehensweise zur Extraktion, Auswertung un
 
 \begin{itemize}
 \item Daten aus Kippo-Logdatei extrahieren
+\item Daten aus SNARE-Logdatei extrahieren
 \item extrahierte Daten auswerten
 \item bestehende Firewallregeln sichern sowie neue Regeln erstellen
 \item Archivierung von Logdaten sowie Analyseergebnissen
@@ -561,10 +562,11 @@ In die Archivierung fließen sämtliche Log- und Analysedaten sowie Konfiguratio
 
 \begin{itemize}
 \item Kippo-Konfiguration und Logdatei
+\item SNARE-Konfiguration und Logdatei
 \item Auswertung der Benutzer- und Passwortdaten
 \item Auswertung der IP-Adressen
 \item Konfigurationsdateien von iptables
-\item SNARE-Konfiguration und Logdatei
+\item Auswertung der SNARE-Logdatei
 \end{itemize}
 
 Für einen effizienten Upload werden die oben genannten Dateien alle 24 Stunden zu einem komprimierten zip-Archiv zusammengefasst und auf den Cloud-Speicher hochgeladen. Um diesen Vorgang zu automatisieren wird folgendes Bash-Skript angelegt:
