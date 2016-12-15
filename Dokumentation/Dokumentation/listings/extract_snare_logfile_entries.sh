@@ -3,14 +3,14 @@ SNARE_POST="/home/mstroh/logs/snare-post.txt"
 SNARE_REQUEST_PATHS="/home/mstroh/logs/snare-request-paths.txt"
 
 # extract POST-requests
-grep 'POST data:' $SNARE_LOG | 
+grep 'POST data:' $SNARE_LOG |
 tr -s '\n' |
 sort |
 uniq -ic |
-sort -bgr > $SNARE_POST
+sort -gr > $SNARE_POST
 
 # extract request-paths
-grep 'Request path:' $SNARE_LOG | 
+grep 'Request path:' $SNARE_LOG |
 tr -s '\n' |
 sort |
 uniq -ic |
