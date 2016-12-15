@@ -14,7 +14,8 @@
    2 Request path: /password
    2 Request path: /pass
    2 Request path: /login.php
-   2 Request path: /language/Swedish${IFS}&&echo${IFS}610cker>qt&&tar${IFS}/string.js
+   2 Request path: /language/Swedish${IFS}&&echo${IFS}610cker
+>qt&&tar${IFS}/string.js
    2 Request path: /command.php
    2 Request path: /cgi/common.cgi
    2 Request path: /../../../../../../../mnt/mtd/qt
