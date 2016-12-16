@@ -17,8 +17,6 @@ Als Hostsystem kommt ein Debian Jessy (Version 8.6) 64-Bit zum Einsatz. Dieses S
 %\item 10 Ipv6-Adressen
 \end{itemize}
 
-Das System wurde mit diesen Eigenschaften gewählt, um sicherzustellen, dass für diesen Versuchsaufbau ausreichend Rechenleistung und Speicher zu Verfügung steht. 
-
 Da das System als installiertes System mit funktionsfähiger Netzwehrkonfiguration übergeben wurde, ist der erste Schritt eine Aktualisierung der installierten Pakete. Dazu werden die Paketlisten neu eingelesen und neue Paketversionen installiert:
 
 \begin{lstlisting}[style=customc]
@@ -48,7 +46,7 @@ dschwenk ALL=(ALL:ALL) ALL
 mstroh ALL=(ALL:ALL) ALL
 \end{lstlisting}
 
-Dies sorgt dafür, dass \textit{sudo} in Kombination mit einem beliebigen Kommando von einem beliebigen authentifizierten Benutzer ausgeführt werden kann. Die Benutzer können somit über \textit{sudo} Aktionen, für die privligierte Berechtigungen notwendig sind, durchführen. Damit ist die Grundkonfiguration des vServers abgeschlossen. %TODO .. wirklich? fehlt  noch was?
+Dies sorgt dafür, dass \textit{sudo} in Kombination mit einem beliebigen Kommando von einem beliebigen authentifizierten Benutzer ausgeführt werden kann. Die Benutzer können somit über \textit{sudo} Aktionen, für die privilegierte Berechtigungen notwendig sind, durchführen. Damit ist die Grundkonfiguration des vServers abgeschlossen. %TODO .. wirklich? fehlt  noch was?
 
 
 \subsection{Konfiguration Serverdienste}
@@ -56,7 +54,7 @@ Dies sorgt dafür, dass \textit{sudo} in Kombination mit einem beliebigen Komman
 
 Das System wurde von providerdienste.de mit einem aktiven SSH-Dienst ausgeliefert. Da der Login eines root-Benutzers über SSH aus Sicherheitsgründen vermieden werden sollte, wird nachfolgend eine Public-Key-Authentifizierung für die Benutzeraccounts der Teammitglieder konfiguriert.\\
 
-Damit eine Public-Key-Authentifizieurng stattfinden kann, muss im jeweiligen Benutzerverzeichnis auf dem Server ein \textit{.ssh}-Verzeichnis angelegt werden. Auf dieses Verzeichnis darf nur der Benutzer selbst zugreifen. Das genannten Verzeichnis wird durch das Kommando \textit{mkdir} angelegt und die Berechtigung über \textit{chmod} angepasst:
+Damit eine Public-Key-Authentifizieurng stattfinden kann, muss im jeweiligen Benutzerverzeichnis auf dem Server ein \textit{.ssh}-Verzeichnis angelegt werden. Auf dieses Verzeichnis darf nur der Benutzer selbst zugreifen. Das genannte Verzeichnis wird durch das Kommando \textit{mkdir} angelegt und die Berechtigung über \textit{chmod} angepasst:
 
 \begin{lstlisting}[style=customc]
 mkdir ~/.ssh
@@ -69,7 +67,7 @@ Auf dem lokalen System der Teammitglieder wird jeweils das RSA-Schlüsselpaar ü
 ssh-keygen -t rsa -C "Kommentar"
 \end{lstlisting}
 
-In das oben erzeugte \textit{.ssh}-Verzeichnis wird jeweils der öffentliche Schlüssel in die Datei \textit{authorized\_keys} abegelegt. Dazu wird der Inhalt der Schlüsseldatei über \textit{cat} ausgegeben und via Pipe und der SSH-Verbindung an die genannte Datei angehängt:
+In das oben erzeugte \textit{.ssh}-Verzeichnis wird jeweils der öffentliche Schlüssel in die Datei \textit{authorized\_keys} abgelegt. Dazu wird der Inhalt der Schlüsseldatei über \textit{cat} ausgegeben und via Pipe und der SSH-Verbindung an die genannte Datei angehängt:
 
 \begin{lstlisting}[style=customc]
 cat id_dsa.pub | ssh username@server 'cat >> .ssh/authorized_keys'
@@ -97,11 +95,7 @@ neu gestartet. Von nun an ist nur noch eine Anmeldung über die Benutzeraccounts
 \subsection{Monitoring von Logdateien}
 \label{subsec:Monitoring von Logdateien}
 
-Logdateien dienen dazu, den Status des Systems und von Diensten zu protokollieren. In diesen Logdateien lassen sich Fehler, Probleme von Diensten oder einfache Statusausgaben nebst Datum und Uhrzeit nachvollziehen. Die Logdateien liegen üblicherweise im Textformat vor und werden im Verzeichnis \textit{/var/log} abgelegt. Die Auswertung der Logdateien kann direkt über die Kommandozeile oder über einen Texteditor erfolgen. Je nach System und der Anzahl an Diensten kann der Umfang an Logdateien nicht unerheblich sein, wodurch die Auswertung eine Menge Zeit in Anspruch nehmen kann.
-
-Um das Honeypotsystem durchgängig überwachen zu können, ohne dabei manuell eine Auswertung von verschiedenen Logdateien vornehmen zu müssen, entscheidet sich das Projektteam zu einer automatisierten Auswertung. Eine Marktanalyse zeigt, dass es hierfür eine größere Anzahl an Lösungen gibt. In einer näheren Auswahl wurden \textit{logcheck}\footnote{ \textit{logcheck}: \url{http://logcheck.org/}} und \textit{Graylog}\footnote{ \textit{Graylog}: \url{https://www.graylog.org/}} betrachtet. \textit{Graylog} ist ein Open-Source-Projekt, welches das Sammeln und Analysieren von Syslog- und Eventlog-Nachrichten von verschiedenen Hosts und Diensten ermöglicht. Es lassen sich somit Logs einer ganzen Infrastruktur zentral auswerten. Die Daten werden in einer Datenbank abgelegt und können über eine Weboberfläche ausgewertet und eingesehen werden. Der Installations- und Konfigurationsaufwand für dieses Setup ist nicht zu unterschätzen. Zudem bietet dies eine weitere Angriffsfläche für das Honeypotsystem. \textit{Logcheck} dagegen wertet Logdateien mit regulären Ausdrücken auf Fehler und Sicherheitsmeldungen aus und sendet regelmäßig eine Benachrichtigung via Email. Die Ausführung erfolgt über die Kommandozeile, oder wie vorkonfiguriert stündlich über einen cronjob. Diese Funktionalität ist im Rahmen dieses Projekt ausreichend, weswegen diese Lösung gewählt wird.\\
-
-Die Installation von \textit{logcheck} erfolgt über \textit{apt-get install logcheck}. Die Konfiguration erfolgt über die Konfigurationsdatei \textit{logcheck.conf}, die unter \textit{/etc/logcheck} zu finden ist. In dieser wird festgelegt, dass die Benachrichtigungen an die beiden Projektmitglieder gehen. Über die Datei \textit{logcheck.logfiles} lassen sich die Logdateien spezifizieren, die ausgwertet werden sollen. Standardmäßig sind hier die Logdateien \textit{/var/log/syslog} \textit{/var/log/auth.log} hinterlegt, über die allgemeine Information zum System sowie zur Authentifizierung protokolliert werden.
+Die Installation von \textit{logcheck} erfolgt über \textit{apt-get install logcheck}. Die Konfiguration erfolgt über die Konfigurationsdatei \textit{logcheck.conf}, die unter \textit{/etc/logcheck} zu finden ist. In dieser wird festgelegt, dass die Emailbenachrichtigungen an die beiden Projektmitglieder gehen. Über die Datei \textit{logcheck.logfiles} lassen sich die Logdateien spezifizieren, die ausgewertet werden sollen. Standardmäßig sind hier die Logdateien \textit{/var/log/syslog} \textit{/var/log/auth.log} hinterlegt, über die allgemeine Information zum System sowie zur Authentifizierung protokolliert werden.
 
 \begin{figure}[ht]
 	\centering
@@ -125,7 +119,7 @@ Die Installation von \textit{logcheck} erfolgt über \textit{apt-get install log
 % ausführliche Beschreibung Kippo + Dateien\\
 % http://resources.infosecinstitute.com/tracking-attackers-honeypot-part-2-kippo/
 
-Dieses Kapitel beschreibt die Vorgehensweise zur Installation und Konfiguration von einem SSH-Honeypot auf Basis von Kippo. Dieser SSH-Honeypot soll wie für SSH üblich auf Port 22 eingerichtet werden. Da aktuell der standard SSH-Dienst auf Port 22 läuft, muss dieser zuvor angepasst werden. Dazu wird der Port in der Konfigurationsdatei \textit{etc/ssh/sshd\_config} auf Port 10022 abgeändert und der Dienst anschließend neu gestartet.\\
+Dieses Kapitel beschreibt die Vorgehensweise zur Installation und Konfiguration von einem SSH-Honeypot auf Basis von Kippo. Dieser SSH-Honeypot soll wie für SSH üblich auf Port 22 eingerichtet werden. Da aktuell der Standard-SSH-Dienst auf Port 22 läuft, muss dieser zuvor angepasst werden. Dazu wird der Port in der Konfigurationsdatei \textit{etc/ssh/sshd\_config} auf Port 10022 abgeändert und der Dienst anschließend neu gestartet.\\
 
 Damit Kippo lauffähig ist, sind einige zusätzliche Pakete notwendig\footnote{ Kippo Abhängigkeiten: \url{https://github.com/desaster/kippo\#requirements}}. Diese werden, ebenso wie der git-Client für einen einfachen Download des Kippo-Projekts, über den Paketmanager installiert:
 
@@ -172,7 +166,7 @@ Damit Kippo mit Hilfe von AuthBind ausgeführt wird, muss das "`Kippo-Start-Skri
 authbind --deep twistd -y kippo.tac -l log/kippo.log --pidfile kippo.pid
 \end{lstlisting}
 
-Der Parameter \textit{--deep} sorgt dafür, dass nicht nur das direkt folgende Programm, sondern auch alle Programme die folge dieses Aufrufs sind, unter \textit{authbind} ausgeführt werden. Kippo selbst basiert auf Twisted, einer "`Event-basierten Netzwerkengine"'\footnote{ \textit{Twisted - Building the engine of your internet}: \url{http://twistedmatrix.com/trac/}} für Python. twistd\footnote{ \textit{twistd}: \url{https://linux.die.net/man/1/twistd}} wird über den Parameter "`\textit{y}"' die Python-Applikation, zudem eine Logdatei sowie ein Pidfile übergeben. In diesem wird die Prozess-ID abgelegt.
+Der Parameter \textit{--deep} sorgt dafür, dass nicht nur das direkt folgende Programm, sondern auch alle Programme die Folge dieses Aufrufs sind, unter \textit{authbind} ausgeführt werden. Kippo selbst basiert auf Twisted, einer "`Event-basierten Netzwerkengine"'\footnote{ \textit{Twisted - Building the engine of your internet}: \url{http://twistedmatrix.com/trac/}} für Python. twistd\footnote{ \textit{twistd}: \url{https://linux.die.net/man/1/twistd}} wird über den Parameter "`\textit{y}"' die Python-Applikation, zudem eine Logdatei sowie ein Pidfile übergeben. In diesem wird die Prozess-ID abgelegt.
 
 Nach Ausführung des Kippo-Startskript \textit{start.sh} läuft der Prozess im Hintergrund. In Folge dessen wird auch das Kippo-Logfile angelegt, in dem Zugriffe auf den SSH-Honeypot-Dienst dokumentiert werden. Änderungen in diesem Logfile können über
 
@@ -218,7 +212,7 @@ Damit ist die Installation und grundlegende Konfiguration des SSH-Honeypots abge
 
 Die IP-Adressen von Angreifern werden im Kippo.log-Logfile neben zahlreichen Informationen wie eingegeben Benutzernamen, Passwörter und Befehle gespeichert. Ein Auszug aus einem Kippo-Logfile ist im Anhang unter \textit{\nameref{app:Ausschnitt aus Kippo-Logdatei}} zu finden. Aus diesen Informationen sollen Statistiken zu Benutzernamen und Passwörter sowie automatisiert Firewallregeln erstellt werden, um Angriffe von diesen IPs zu verhindern.
 
-Wie dem Kippo-Logfile unter \textit{\nameref{app:Ausschnitt aus Kippo-Logdatei}} zu entnehmen ist, werden Benutzernamen und Passwörter als Teile von Zeichenketten im Logfile abgelegt. Für eine Auswertung müssen diese aus dem Logfile extrahiert werden. Dies erfolgt mit Hilfe der Werkzeuge \textit{grep}, welches nach  einer gegebenen Zeichenkette, hier "`login attempt"', in einer Datei sucht. Die Zeilen, die dem Suchmuster entsprechen werden via Pipe an \textit{awk} übergeben. \textit{awk} arbeitet intern mit Variablen, die jeweils eine Zeichenkette einer Zeile, die voneinander durch Leerzeichen getrennt sind beinhalten. Die Variable sind dabei fortlaufend nummeriert. Variable \$0 enthält die ganze Zeile, Variable \$9 die neunte durch Leerzeichen getrennte Zeichenkette, die in diesem Fall den Loginnamen und das Passwort im Format "`[login/password]"' enthält. Duplikate werden durch \textit{sort} und \textit{uniq} entfernt. Über \textit{sed} und einen regulären Ausdruck werden die beiden eckigen Klammern entfernt:
+Wie dem Kippo-Logfile unter \textit{\nameref{app:Ausschnitt aus Kippo-Logdatei}} zu entnehmen ist, werden Benutzernamen und Passwörter als Teile von Zeichenketten im Logfile abgelegt. Für eine Auswertung müssen diese aus dem Logfile extrahiert werden. Dies erfolgt mit Hilfe der Werkzeuge \textit{grep}, welches nach  einer gegebenen Zeichenkette, hier "`login attempt"', in einer Datei sucht. Die Zeilen, die dem Suchmuster entsprechen werden via Pipe an \textit{awk} übergeben. \textit{awk} arbeitet intern mit Variablen, die jeweils eine Zeichenkette einer Zeile, die voneinander durch Leerzeichen getrennt sind beinhalten. Die Variable sind dabei fortlaufend nummeriert. Variable \$0 enthält die ganze Zeile, Variable \$9 die neunte durch Leerzeichen getrennte Zeichenkette, die in diesem Fall den Loginnamen und das Passwort im Format "`[login/password]"' enthält. Sortiert wird die Liste durch \textit{sort}. Über \textit{sed} und einen regulären Ausdruck werden die beiden eckigen Klammern entfernt:
 
 
 % http://bob.k6rtm.net/kippowho.html
@@ -227,12 +221,11 @@ Wie dem Kippo-Logfile unter \textit{\nameref{app:Ausschnitt aus Kippo-Logdatei}}
 grep ' login attempt ' kippo.log |
   awk '{print ($9)}' |
   sort |
-  uniq |
   sed -r 's/]|\[//g' > user.txt
 
 \end{lstlisting}
 
-Hierdurch erhalten wir eine Liste von Kombinationen aus Benutzernamen und Passwörter in der Form \textit{username/passwort}. Passwörter werden zudem separat ohne Benutzernamen extrahiert. Dazu ist ein weiterer Aufruf von sed notwendig, der den Benutzernamen und das "`/"' entfernt. Passwortduplikate werden hierbei nicht entfernt, um daraus aussagekräftige Statistiken generieren zu können.
+Hierdurch erhalten wir eine Liste von Kombinationen aus Benutzernamen und Passwörter in der Form \textit{username/passwort}. Passwörter werden zudem separat ohne Benutzernamen extrahiert. Dazu ist ein weiterer Aufruf von sed notwendig, der den Benutzernamen und das "`/"' entfernt.
 
 \begin{lstlisting}[style=customc]
 grep ' login attempt ' kippo.log |
@@ -242,7 +235,7 @@ grep ' login attempt ' kippo.log |
 \end{lstlisting}
 
 Die Ausführung dieser Befehle wird über ein Bash-Skript realisiert. Das vollständige Skript ist im Anhang unter \textit{\nameref{app:Benutzernamen und Passwörter extrahieren}} zu finden.
-Die Auswertung der Passwörter erfolgt über \textit{Pipal Password Analyzer}\footnote{ \textit{Pipal Password Analyzer}: \url{https://github.com/digininja/pipal}}. Dieses open source Werkzeug erstellt Statistiken über die am häufigsten eingegeben Passwörter, über Zusammensetzung der Passwörter aus verschiedenen Zeichenklassen sowie Passwortlänge. Zudem erstellt es dazu "`Text-Grafiken"'. Der \textit{Pipal Password Analyzer} basiert auf \textit{ruby}, was durch \textit{apt-get install ruby} installiert wird. Der Download des Werkzeugs selbst erfolgt von der Projektseite auf Github:
+Die Auswertung der Passwörter erfolgt über \textit{Pipal Password Analyzer}. Dieses open source Werkzeug erstellt Statistiken über die am häufigsten eingegeben Passwörter, über Zusammensetzung der Passwörter aus verschiedenen Zeichenklassen sowie Passwortlänge. Zudem erstellt es dazu "`Text-Grafiken"'. Der \textit{Pipal Password Analyzer} basiert auf \textit{ruby}, was durch \textit{apt-get install ruby} installiert wird. Der Download des Werkzeugs selbst erfolgt von der Projektseite auf Github:
 
 \begin{lstlisting}[style=customc]
 git clone https://github.com/digininja/pipal.git
@@ -265,9 +258,9 @@ erzeugt werden. Eine dieser Statistiken ist im Anhang unter \textit{\nameref{app
 \subsection{Firewallregeln erstellen}
 \label{subsec:Firewallregeln erstellen}
 
-Ziel unseres System ist es, einen Angreifer zu beobachten und aus seinem Vorgehen zu lernen. Anschließend soll der Angreifer von der Infrastruktur fern gehalten werden, um die Sicherheit anderer Systeme zu wahren. Um einen Angreifer wirkungsvoll von einer Infrastruktur fernzuhalten, besteht die Möglichkeit den Datenverkehr des Angreifers mit einer Firewall, die dieser Infrastruktur vorgelagert ist, zu blockieren. Da in dem vorliegenden Versuchsaufbau keine weiterreichende Infrastruktur mit einer vorgelagerten Firewall vorhanden ist, wird hier exemplarisch auf dem Honeypotsystem selbst die Abwehr der Datenpakete des Angreifers mit Hilfe von \textit{iptables} vorgenommen. Die Wahl fällt auf \textit{iptables}, da hiermit Firwallregeln über sogenannte Ketten von Regeln erstellt werden können. Zudem ist \textit{iptables} standardmäßig unter Debian verfügbar und kann über ein Bash-Skript automatisiert werden. 
+Ziel unseres Systems ist es, einen Angreifer zu beobachten und aus seinem Vorgehen zu lernen. Anschließend soll der Angreifer von der Infrastruktur ferngehalten werden, um die Sicherheit anderer Systeme zu wahren. Um einen Angreifer wirkungsvoll von einer Infrastruktur fernzuhalten, besteht die Möglichkeit den Datenverkehr des Angreifers mit einer Firewall, die dieser Infrastruktur vorgelagert ist, zu blockieren. Da in dem vorliegenden Versuchsaufbau keine weiterreichende Infrastruktur mit einer vorgelagerten Firewall vorhanden ist, wird hier exemplarisch auf dem Honeypotsystem selbst die Abwehr der Datenpakete des Angreifers mit Hilfe von \textit{iptables} vorgenommen. Die Wahl fällt auf \textit{iptables}, da hiermit Firwallregeln über sogenannte Ketten von Regeln erstellt werden können. Zudem ist \textit{iptables} standardmäßig unter Debian verfügbar und kann über ein Bash-Skript automatisiert werden. 
 
-Um Firewallregeln generieren zu können, müssen die IP-Adressen der Angreifer aus dem Kippo-Logfile extrahiert werden. Dies geschieht wie bereits unter \ref{subsec:Kippo-Logfile auswerten} beschrieben mit Hilfe der Werkzeuge \textit{grep}, \textit{sort} und \textit{uniq}. Dazu wird an \textit{grep} ein regulären Ausdruck übergeben, der IP-Adressen filtert. Damit keine identischen Firewallregeln erzeugt werden, werden doppelte IP-Adressen über \textit{sort} und \textit{uniq} entfernt.
+Um Firewallregeln generieren zu können, müssen die IP-Adressen der Angreifer aus dem Kippo-Logfile extrahiert werden. Dies geschieht wie bereits unter \ref{subsec:Kippo-Logfile auswerten} beschrieben mit Hilfe der Werkzeuge \textit{grep}, \textit{sort} und \textit{uniq}. Dazu wird an \textit{grep} ein regulärer Ausdruck übergeben, der IP-Adressen filtert. Damit keine identischen Firewallregeln erzeugt werden, werden doppelte IP-Adressen über \textit{sort} und \textit{uniq} entfernt.
 
 \begin{lstlisting}[style=customc]
 cat logfile.log | 
@@ -314,7 +307,7 @@ Das Skript fertig zuerst über \textit{iptabales-save} ein Backup der bestehende
 \subsection{IP-Adressen auswerten}
 \label{subsec:IP-Adressen auswerten}
 
-Unter \ref{sec:Kann-Kriterien} wurde eine Anforderungen für einen reverse-DNS-Lookup von Angreifer IP-Adressen aufgeführt. Die Angreifer-IP-Adressen wurde bereits durch das Skript unter \ref{subsec:Firewallregeln erstellen} extrahiert. Mit \textit{getent}\footnote{ \textit{getent}: \url{http://man7.org/linux/man-pages/man1/getent.1.html}} kann von diesen nun ein reverse-lookup erfolgen. Um dies nicht von Hand machen zu müssen, wird ein Skript erstellt:
+Unter \ref{sec:Kann-Kriterien} wurde eine Anforderungen für einen reverse-DNS-Lookup von Angreifer IP-Adressen aufgeführt. Die Angreifer-IP-Adressen wurden bereits durch das Skript unter \ref{subsec:Firewallregeln erstellen} extrahiert. Mit \textit{getent}\footnote{ \textit{getent}: \url{http://man7.org/linux/man-pages/man1/getent.1.html}} kann von diesen nun ein reverse-lookup erfolgen. Um dies nicht von Hand machen zu müssen, wird ein Skript erstellt:
 
 \lstinputlisting
     [caption={Skript zur Extraktion von Benutzernamen und Passwörter aus Kippo-Logfile}
@@ -323,25 +316,16 @@ Unter \ref{sec:Kann-Kriterien} wurde eine Anforderungen für einen reverse-DNS-L
  {listings/do_reverse_dns_lookup.sh}
 
 Eine beispielhafte reverse-DNS-Auswertung ist im Anhang unter \textit{\nameref{app:Auswertung reverse-DNS-Lookup}} zu finden.
-Um nicht nur eine Zuordnung von IP-Adressen zu DNS-Namen zu haben, sondern um auch ein Gefühl für die Herkunft der Angriffe zu bekommen, entschied sich das Projektteam zusätzlich zu einer geographischen Darstellung. Die Website batchgeo.com\footnote{ batchgeo.com: \url{http://de.batchgeo.com/}} bietet einen Dienst, der anhand von gegeben Daten eine Karte erstellt. Diese gegeben Daten können beispielsweise Adressen, Koordinaten oder eben auch IP-Adressen sein. Mit Hilfe einer "`Geo-IP-Adressen-Funktion"' erstellt dieser Dienst eine Karte, auf der die IP-Adressen eingezeichnet sind. Abbildung \ref{fig:geo_ip_world} zeigt eine dieser erzeugten Karten, die die gesamte Welt abbildet.
+Um nicht nur eine Zuordnung von IP-Adressen zu DNS-Namen zu haben, sondern um auch ein Gefühl für die Herkunft der Angriffe zu bekommen, entschied sich das Projektteam zusätzlich zu einer geographischen Darstellung. Die Website batchgeo.com\footnote{ batchgeo.com: \url{http://de.batchgeo.com/}} bietet einen Dienst, der anhand von gegebenen Daten eine Karte erstellt. Diese gegeben Daten können beispielsweise Adressen, Koordinaten oder eben auch IP-Adressen sein. Mit Hilfe einer "`Geo-IP-Adressen-Funktion"' erstellt dieser Dienst eine Karte, auf der die IP-Adressen eingezeichnet sind. Abbildung \ref{fig:geo_ip_world} zeigt eine dieser erzeugten Karten, die die gesamte Welt abbildet.
 
 \begin{figure}[ht]
 	\centering
-		\includegraphics[width=0.94\textwidth]{img/geo_ip_world.png}
+		\includegraphics[width=1.0\textwidth]{img/geo_ip_world.png}
 	\caption{Karte mit Geo-Location von Angreifer-IP-Adressen}
 	\label{fig:geo_ip_world}
 \end{figure}
 
-Diese Karte zeigt deutliche, dass ein Großteil der Angriffe aus China, Europa und Nordamerika stammen. Abbildung \ref{fig:geo_ip_eu} zeigt speziell einen Ausschnitt von Europa:
-
-\begin{figure}[ht]
-	\centering
-		\includegraphics[width=0.94\textwidth]{img/geo_ip_eu.png}
-	\caption{Karte mit Geo-Location von Angreifer-IP-Adressen}
-	\label{fig:geo_ip_eu}
-\end{figure}
-
-Die Verteilung der IP-Adressen in Europa erstreckt sich hauptsächlich über Mitteleuropa. Allgemein muss diese Auswertung jedoch mit Vorsicht betrachtet werden, da die Zuordnung einer IP-Adresse zu einer Örtlichkeit einer gewissen Fehlerrate unterliegt. batchgeo.com ordnet die IP-Adresse mit Hilfe von Daten von MaxMind zu. MaxMind gibt für die Zuordnung von IP-Adressen zu Städten in Ländern wie den USA, China, Russland oder Deutschland eine Zuverlässigkeit von über 75\% an. Für andere Länder ist teilweise eine niedrigere Zuverlässigkeit gegeben, die in einigen Fällen unter 50\% liegt. Eine Auflistung je Land kann auf der Website von MaxMind\footnote{ MaxMind GeoIP2 City Accuracy: \url{https://www.maxmind.com/en/geoip2-city-database-accuracy}} eingesehen werden.
+Diese Karte zeigt deutliche, dass ein Großteil der Angriffe aus Süd-Ostasien, Europa sowie den Ländern USA, Mexiko und Brasilien stammen. Die Verteilung der IP-Adressen in Europa erstreckt sich hauptsächlich über Mitteleuropa. Allgemein muss diese Auswertung jedoch mit Vorsicht betrachtet werden, da die Zuordnung einer IP-Adresse zu einer Örtlichkeit einer gewissen Fehlerrate unterliegt. batchgeo.com ordnet die IP-Adresse mit Hilfe von Daten von MaxMind zu. MaxMind gibt für die Zuordnung von IP-Adressen zu Städten in Ländern wie den USA, China, Russland oder Deutschland eine Zuverlässigkeit von über 75\% an. Für andere Länder ist teilweise eine niedrigere Zuverlässigkeit gegeben, die in einigen Fällen unter 50\% liegt. Eine Auflistung je Land kann auf der Website von MaxMind\footnote{ MaxMind GeoIP2 City Accuracy: \url{https://www.maxmind.com/en/geoip2-city-database-accuracy}} eingesehen werden.
 
 
 
@@ -360,7 +344,7 @@ installiert wird. Als Zeitintervall, in der auf Änderungen überprüft werden s
 @hourly inotifywait -t 3599 -e modify /home/kippo/kippo/log/kippo.log && /home/dschwenk/email-alert/alert.sh
 \end{lstlisting}
 
-Als Parameter werden \textit{inotifywait} eine Zeit von 3599 Sekunden übergeben, damit sich dieser Prozess nach Ablauf dieser Zeit automatisch beendet. Würde keine Zeit angegeben werden, würde dieser Prozess bis zu einer Änderung, die in einer beliebigen Zeit in der Zukunft liegen kann, im Hintergrund weiter laufen. Stündlich würde jedoch zusätzlich ein neuer Prozess gestartet werden. Die Zeitangabe verhindert somit die Mehrfachausführung. Zusätlich wird die zu überwachende Logdatei angegeben, so wie eine Aktion, die bei einer Änderung ausgeführt werden soll. In diesem Fall soll das Skript \textit{alert.sh} ausgeführt werden, welches nachfolged aufgelistet ist:
+Als Parameter werden \textit{inotifywait} eine Zeit von 3599 Sekunden übergeben, damit sich dieser Prozess nach Ablauf dieser Zeit automatisch beendet. Würde keine Zeit angegeben werden, würde dieser Prozess bis zu einer Änderung, die in einer beliebigen Zeit in der Zukunft liegen kann, im Hintergrund weiterlaufen. Stündlich würde jedoch zusätzlich ein neuer Prozess gestartet werden. Die Zeitangabe verhindert somit die Mehrfachausführung. Zusätzlich wird die zu überwachende Logdatei angegeben, so wie eine Aktion, die bei einer Änderung ausgeführt werden soll. In diesem Fall soll das Skript \textit{alert.sh} ausgeführt werden, welches nachfolgend aufgelistet ist:
 
 \begin{lstlisting}[language=bash,style=customccolor]
 #!/bin/bash
@@ -507,7 +491,7 @@ Diese Befehle werden mit Hilfe eines hierfür geschriebenen Bash-Skripts ausgef�
 \subsection{Benachrichtigung bei Zugriff auf Web-Honeypot}
 \label{subsec:Installation und Konfiguration SNARE}
 
-Aufgrund von Erfahrungen bei der Verwendung einer automatischen Benachrichtigung bei dem SSH-Honeypot Kippo, hat sich das Projektteam dazu entschlossen, beim Web-Honeypot drei Mal täglich auf Veränderungen des Log-Files zu prüfen und die Projektmitglieder über neue Einträge in Kenntniss zu setzen.
+Aufgrund von Erfahrungen bei der Verwendung einer automatischen Benachrichtigung bei dem SSH-Honeypot Kippo, hat sich das Projektteam dazu entschlossen, beim Web-Honeypot drei Mal täglich auf Veränderungen des Log-Files zu prüfen und die Projektmitglieder über neue Einträge in Kenntnis zu setzen.
 
 
 \section{Archivierung und Automatisierung}
@@ -517,13 +501,13 @@ Aufgrund von Erfahrungen bei der Verwendung einer automatischen Benachrichtigung
 \subsection{Archivierung von Daten auf Cloud-Speicher}
 \label{subsec:Archivierung von Daten auf Cloud-Speicher}
 
-Um der Soll-Anforderung nach der Archivierung von Logdaten sowie Analyseergebnisse zu entsprechen, werden diese Daten automatisiert auf einem Cloud-Speicher abgelegt. Dieses Archivierung stellt sicher, dass auf diese Daten selbst dann zurückgegriffen werden kann, wenn das System kompromittiert wurde oder nicht weiter zur Verfügung steht. Eine Marktanalyse ergibt eine Vielzahl an verfügbaren Cloud-Speichern. Das Projektteam entscheidet sich auf Grund der Verfügbarkeit eines Linux-Clients, der einfachen Installation und Konfiguration dieses Clients sowie dessen Möglichkeit zur automatischen Ausführung via Kommandozeile für Google Drive\footnote{ Google Drive: \url{https://www.google.com/intl/de_de/drive/}}. Anzumerken ist, dass dieser Client nicht von Google selbst, sondern von Petter Rasmussen in einem open source Projekt entwickelt wird\footnote{ Peter Rasmussen gDrive command line tool: \url{https://github.com/prasmussen/gdrive}}. Der Download der aktuellen Version 2.1 des 64-Bit-Clients für Linux erfolgt durch:
+Um der Soll-Anforderung nach der Archivierung von Logdaten sowie Analyseergebnisse zu entsprechen, werden diese Daten automatisiert auf einem Cloud-Speicher abgelegt. Diese Archivierung stellt sicher, dass auf diese Daten selbst dann zurückgegriffen werden kann, wenn das System kompromittiert wurde oder nicht weiter zur Verfügung steht. Eine Marktanalyse ergibt eine Vielzahl an verfügbaren Cloud-Speichern. Das Projektteam entscheidet sich auf Grund der Verfügbarkeit eines Linux-Clients, der einfachen Installation und Konfiguration dieses Clients sowie dessen Möglichkeit zur automatischen Ausführung via Kommandozeile für Google Drive\footnote{ Google Drive: \url{https://www.google.com/intl/de_de/drive/}}. Anzumerken ist, dass dieser Client nicht von Google selbst, sondern von Petter Rasmussen in einem open source Projekt entwickelt wird\footnote{ Peter Rasmussen gDrive command line tool: \url{https://github.com/prasmussen/gdrive}}. Der Download der aktuellen Version 2.1 des 64-Bit-Clients für Linux erfolgt durch:
 
 \begin{lstlisting}[style=customc]
 wget https://docs.google.com/uc?id=0B3X9GlR6EmbnQ0FtZmJJUXEyRTA&export=download
 \end{lstlisting}
 
-Durch eine Umbennung wird der kryptische Dateiname lesbar gemacht. Zudem wird die Datei als ausführbar markiert:
+Durch eine Umbenennung wird der kryptische Dateiname lesbar gemacht. Zudem wird die Datei als ausführbar markiert:
 
 \begin{lstlisting}[style=customc]
 mv 0B3X9GlR6EmbnQ0FtZmJJUXEyRTA&export gdrive
@@ -548,7 +532,7 @@ Infolge dessen wird eine Aufforderung zum Besuch der Google-Drive-Website zur Au
 \subsection{Automatisierung}
 \label{subsec:Automatisierung}
 
-In den vorherigen Kapitel wurde die Vorgehensweise zur Extraktion, Auswertung und Weiterverarbeitung von Daten erläutert. Für einzelne Aufgaben wurden dazu Skripte erstellt. Um diese Skripte nun nicht regelmäßig von Hand ausführen zu müssen, werden diese einzelne Skripte über ein zentrales Skript gesteuert und täglich ausgeführt. Dieses Skript führt folgende Aufgaben aus:
+In den vorherigen Kapiteln wurde die Vorgehensweise zur Extraktion, Auswertung und Weiterverarbeitung von Daten erläutert. Für einzelne Aufgaben wurden dazu Skripte erstellt. Um diese Skripte nun nicht regelmäßig von Hand ausführen zu müssen, werden diese einzelne Skripte über ein zentrales Skript gesteuert und täglich ausgeführt. Dieses Skript führt folgende Aufgaben aus:
 
 \begin{itemize}
 \item Daten aus Kippo-Logdatei extrahieren
